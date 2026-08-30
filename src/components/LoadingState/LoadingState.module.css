@@ -1,0 +1,107 @@
+.container {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    min-height: 180px;
+
+    padding: 3rem 1rem;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+.message {
+    margin: 0;
+
+    font-size: 1rem;
+
+    font-weight: var(--font-semibold);
+
+    line-height: 1.4;
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .container {
+        min-height: 220px;
+
+        padding: 4rem 1.5rem;
+    }
+
+    .message {
+        font-size: 1.05rem;
+    }
+
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .container {
+        min-height: 240px;
+
+        padding: 4.5rem 2rem;
+    }
+
+    .message {
+        font-size: 1.1rem;
+    }
+
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .container {
+        min-height: 260px;
+
+        padding: 5rem 2rem;
+    }
+
+    .message {
+        font-size: 1.15rem;
+    }
+
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .container {
+        min-height: 300px;
+
+        padding: 6rem 3rem;
+    }
+
+    .message {
+        font-size: 1.2rem;
+    }
+
+}

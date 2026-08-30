@@ -1,0 +1,188 @@
+.cart {
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    padding: 2rem 1rem 3rem;
+
+    box-sizing: border-box;
+}
+
+
+/* ================================
+   Title
+   ================================ */
+
+.title {
+    margin: 0 0 1.5rem;
+
+    font-size: 1.6rem;
+    font-weight: var(--font-semibold);
+}
+
+
+/* ================================
+   Empty cart
+   ================================ */
+
+.empty {
+    margin: 2rem 0;
+
+    text-align: center;
+
+    font-size: 1rem;
+
+    opacity: 0.7;
+}
+
+
+/* ================================
+   Cart items
+   ================================ */
+
+.list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1rem;
+
+    width: 100%;
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .cart {
+        max-width: 850px;
+
+        padding: 2.5rem 1.5rem 3.5rem;
+    }
+
+    .title {
+        margin-bottom: 2rem;
+
+        font-size: 1.8rem;
+    }
+
+    .list {
+        gap: 1.25rem;
+    }
+
+    .empty {
+        font-size: 1.05rem;
+    }
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .cart {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(300px, 360px);
+
+        grid-template-areas:
+            "title title"
+            "list summary";
+
+        align-items: start;
+
+        column-gap: 2rem;
+
+        max-width: 1100px;
+
+        padding: 3rem 2rem 4rem;
+    }
+
+    .title {
+        grid-area: title;
+
+        margin-bottom: 2rem;
+
+        font-size: 2rem;
+    }
+
+    .list {
+        grid-area: list;
+
+        gap: 1.25rem;
+    }
+
+    .empty {
+        grid-column: 1 / -1;
+    }
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .cart {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(340px, 400px);
+
+        column-gap: 3rem;
+
+        max-width: 1250px;
+
+        padding: 3.5rem 2rem 4rem;
+    }
+
+    .title {
+        margin-bottom: 2.25rem;
+
+        font-size: 2.2rem;
+    }
+
+    .list {
+        gap: 1.5rem;
+    }
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .cart {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(380px, 440px);
+
+        column-gap: 4rem;
+
+        max-width: 1500px;
+
+        padding: 4rem 3rem 5rem;
+    }
+
+    .title {
+        font-size: 2.4rem;
+    }
+
+    .list {
+        gap: 1.75rem;
+    }
+}

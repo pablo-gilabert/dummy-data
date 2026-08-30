@@ -1,0 +1,168 @@
+.container {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    width: 100%;
+
+    max-width: 650px;
+
+    margin: 0 auto;
+
+    padding: 3rem 1rem;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+
+/* ================================
+   Title
+   ================================ */
+
+.title {
+    margin: 0;
+
+    font-size: 1.5rem;
+
+    font-weight: var(--font-semibold);
+
+    line-height: 1.3;
+}
+
+
+/* ================================
+   Status
+   ================================ */
+
+.status {
+    font-size: 0.9rem;
+
+    font-weight: var(--font-medium);
+
+    opacity: 0.75;
+}
+
+
+/* ================================
+   Message
+   ================================ */
+
+.message {
+    max-width: 500px;
+
+    margin: 0;
+
+    font-size: 1rem;
+
+    line-height: 1.5;
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .container {
+        max-width: 700px;
+
+        padding: 4rem 1.5rem;
+    }
+
+    .title {
+        font-size: 1.65rem;
+    }
+
+    .status {
+        font-size: 0.95rem;
+    }
+
+    .message {
+        font-size: 1.05rem;
+    }
+
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .container {
+        max-width: 750px;
+
+        padding: 4.5rem 2rem;
+    }
+
+    .title {
+        font-size: 1.75rem;
+    }
+
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .container {
+        max-width: 800px;
+
+        padding: 5rem 2rem;
+    }
+
+    .title {
+        font-size: 1.85rem;
+    }
+
+    .message {
+        max-width: 550px;
+
+        font-size: 1.1rem;
+    }
+
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .container {
+        max-width: 850px;
+
+        padding: 6rem 3rem;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .status {
+        font-size: 1rem;
+    }
+
+    .message {
+        max-width: 600px;
+
+        font-size: 1.15rem;
+    }
+
+}

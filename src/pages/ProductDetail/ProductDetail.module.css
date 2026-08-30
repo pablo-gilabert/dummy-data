@@ -1,0 +1,355 @@
+.main {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1.5rem;
+
+    width: 90%;
+    max-width: 600px;
+
+    margin: 0 auto;
+    padding: 1.5rem 0;
+}
+
+
+/* ================================
+   Back button
+   ================================ */
+
+.backButton {
+    align-self: flex-start;
+
+    padding: 0.5rem 1rem;
+
+    border-radius: 8px;
+
+    background-color: var(--tertiary-color);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.backButton:hover {
+    transform: translateX(-2px);
+
+    opacity: 0.85;
+}
+
+
+/* ================================
+   Product information
+   ================================ */
+
+.info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.75rem;
+}
+
+.category {
+    font-size: 0.9rem;
+
+    color: var(--primary-color);
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: var(--font-semibold);
+
+    line-height: 1.2;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+
+    gap: 0.35rem;
+}
+
+.rating span:first-child {
+    color: var(--primary-color);
+}
+
+
+/* ================================
+   Price
+   ================================ */
+
+.priceContainer {
+    display: flex;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 0.75rem;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: var(--font-semibold);
+}
+
+.originalPrice {
+    text-decoration: line-through;
+}
+
+.discount {
+    padding: 0.25rem 0.5rem;
+
+    border-radius: 6px;
+
+    background-color: var(--primary-color);
+
+    font-size: 0.8rem;
+}
+
+
+/* ================================
+   Stock
+   ================================ */
+
+.stock {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.25rem;
+}
+
+
+/* ================================
+   Description
+   ================================ */
+
+.description {
+    line-height: 1.5;
+}
+
+
+/* ================================
+   Cart button
+   ================================ */
+
+.buttonCart {
+    width: 100%;
+
+    padding: 0.75rem;
+
+    border-radius: 8px;
+
+    background-color: var(--primary-color);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.buttonCart:hover {
+    transform: translateY(-1px);
+
+    opacity: 0.9;
+}
+
+.buttonCart:active {
+    transform: translateY(0);
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .main {
+        width: 88%;
+
+        max-width: 850px;
+
+        gap: 2rem;
+
+        padding: 2rem 0;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .price {
+        font-size: 1.65rem;
+    }
+
+    .description {
+        font-size: 1rem;
+
+        line-height: 1.6;
+    }
+
+    .buttonCart {
+        padding: 0.85rem;
+
+        font-size: 1rem;
+    }
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .main {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1.1fr)
+            minmax(320px, 0.9fr);
+
+        grid-template-areas:
+            "back back"
+            "gallery info"
+            "gallery cart"
+            "reviews reviews";
+
+        width: 90%;
+
+        max-width: 1100px;
+
+        column-gap: 3rem;
+        row-gap: 1.5rem;
+
+        padding: 2.5rem 0;
+    }
+
+    .backButton {
+        grid-area: back;
+    }
+
+    .info {
+        grid-area: info;
+
+        justify-content: center;
+
+        gap: 1rem;
+    }
+
+    .title {
+        font-size: 2.1rem;
+    }
+
+    .category {
+        font-size: 0.95rem;
+    }
+
+    .price {
+        font-size: 1.75rem;
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+
+    .buttonCart {
+        grid-area: cart;
+
+        align-self: start;
+
+        padding: 0.9rem;
+    }
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .main {
+        width: 88%;
+
+        max-width: 1250px;
+
+        grid-template-columns:
+            minmax(0, 1.15fr)
+            minmax(400px, 0.85fr);
+
+        column-gap: 4rem;
+
+        padding: 3rem 0;
+    }
+
+    .title {
+        font-size: 2.35rem;
+    }
+
+    .category {
+        font-size: 1rem;
+    }
+
+    .price {
+        font-size: 1.9rem;
+    }
+
+    .description {
+        font-size: 1.05rem;
+
+        line-height: 1.7;
+    }
+
+    .buttonCart {
+        padding: 1rem;
+
+        font-size: 1.05rem;
+    }
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .main {
+        width: 86%;
+
+        max-width: 1500px;
+
+        grid-template-columns:
+            minmax(0, 1.2fr)
+            minmax(450px, 0.8fr);
+
+        column-gap: 5rem;
+
+        padding: 4rem 0;
+    }
+
+    .title {
+        font-size: 2.6rem;
+    }
+
+    .price {
+        font-size: 2rem;
+    }
+
+    .description {
+        font-size: 1.1rem;
+    }
+
+    .buttonCart {
+        padding: 1.1rem;
+
+        font-size: 1.1rem;
+    }
+}

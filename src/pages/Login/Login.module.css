@@ -1,0 +1,333 @@
+.login {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: calc(100vh - 40px);
+
+    padding: 2rem 1rem;
+
+    box-sizing: border-box;
+
+    background-color: #dff6ff;
+}
+
+.card {
+    width: 100%;
+
+    max-width: 450px;
+
+    padding: 2rem;
+
+    box-sizing: border-box;
+
+    background-color: #ffffff;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, 0.12);
+}
+
+.title {
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 1.75rem;
+
+    font-weight: var(--font-semibold);
+
+    color: #000000;
+}
+
+.message {
+    margin: 0.75rem 0 2rem;
+
+    text-align: center;
+
+    font-size: 0.95rem;
+
+    line-height: 1.5;
+
+    color: #495057;
+}
+
+.form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.25rem;
+}
+
+.field {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.4rem;
+}
+
+.field label {
+    font-size: 0.95rem;
+
+    font-weight: var(--font-medium);
+
+    color: #000000;
+}
+
+.field input {
+    width: 100%;
+
+    padding: 0.75rem;
+
+    box-sizing: border-box;
+
+    border: 1px solid #ced4da;
+
+    border-radius: 8px;
+
+    background-color: #ffffff;
+
+    color: #212529;
+
+    font-family: inherit;
+
+    font-size: 1rem;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.field input:focus {
+    border-color: var(--primary-color);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(22, 163, 74, 0.15);
+}
+
+.field input:disabled {
+    background-color: #f1f3f5;
+
+    cursor: not-allowed;
+}
+
+.error {
+    margin: -0.5rem 0 0;
+
+    color: #d62828;
+
+    font-size: 0.85rem;
+
+    line-height: 1.4;
+}
+
+.button {
+    width: 100%;
+
+    padding: 0.85rem 1rem;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background-color: #16a34a;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 1rem;
+
+    font-weight: var(--font-semibold);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.button:hover {
+    background-color: #15803d;
+
+    transform: translateY(-1px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.button:disabled {
+    background-color: #6c757d;
+
+    opacity: 0.7;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .login {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .card {
+        max-width: 480px;
+
+        padding: 2.25rem;
+    }
+
+    .title {
+        font-size: 1.9rem;
+    }
+
+    .message {
+        font-size: 1rem;
+    }
+
+    .field input {
+        padding: 0.8rem;
+
+        font-size: 1rem;
+    }
+
+    .button {
+        padding: 0.9rem 1rem;
+    }
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .login {
+        padding: 3rem 2rem;
+    }
+
+    .card {
+        max-width: 500px;
+
+        padding: 2.5rem;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .form {
+        gap: 1.35rem;
+    }
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .login {
+        padding: 3.5rem 2rem;
+    }
+
+    .card {
+        max-width: 520px;
+
+        padding: 2.75rem;
+    }
+
+    .title {
+        font-size: 2.1rem;
+    }
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .login {
+        padding: 4rem 3rem;
+    }
+
+    .card {
+        max-width: 540px;
+
+        padding: 3rem;
+    }
+
+    .title {
+        font-size: 2.2rem;
+    }
+
+    .message {
+        font-size: 1rem;
+    }
+}
+
+
+/* ================================
+   Small Mobile
+   ================================ */
+
+@media (max-width: 480px) {
+
+    .login {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .card {
+        padding: 1.5rem 1.25rem;
+
+        border-radius: 10px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .message {
+        margin-bottom: 1.5rem;
+
+        font-size: 0.9rem;
+    }
+
+    .form {
+        gap: 1rem;
+    }
+
+    .field input {
+        padding: 0.7rem;
+
+        font-size: 0.95rem;
+    }
+
+    .button {
+        padding: 0.8rem;
+    }
+}

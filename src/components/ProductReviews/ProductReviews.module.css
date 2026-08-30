@@ -1,0 +1,198 @@
+.reviews {
+    display: flex;
+    flex-direction: column;
+
+    gap: 1rem;
+
+    width: 100%;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: var(--font-semibold);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.75rem;
+}
+
+.review {
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.5rem;
+
+    padding: 1rem;
+
+    border-radius: 10px;
+
+    background-color: var(--tertiary-color);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+}
+
+.name {
+    font-weight: var(--font-semibold);
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+
+    gap: 0.25rem;
+}
+
+.ratingIcon {
+    font-size: 0.85rem;
+
+    color: var(--primary-color);
+}
+
+.comment {
+    line-height: 1.4;
+
+    max-width: 800px;
+}
+
+.date {
+    font-size: 0.8rem;
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .reviews {
+        gap: 1.25rem;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+
+    .list {
+        gap: 1rem;
+    }
+
+    .review {
+        padding: 1.25rem;
+    }
+
+    .comment {
+        line-height: 1.5;
+    }
+
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .reviews {
+        gap: 1.5rem;
+    }
+
+    .title {
+        font-size: 1.7rem;
+    }
+
+    .review {
+        padding: 1.5rem;
+    }
+
+    .header {
+        gap: 1.5rem;
+    }
+
+    .comment {
+        max-width: 900px;
+    }
+
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .reviews {
+        gap: 1.75rem;
+    }
+
+    .title {
+        font-size: 1.8rem;
+    }
+
+    .list {
+        gap: 1.25rem;
+    }
+
+    .review {
+        padding: 1.5rem 1.75rem;
+
+        border-radius: 12px;
+    }
+
+    .comment {
+        max-width: 1000px;
+
+        line-height: 1.55;
+    }
+
+    .date {
+        font-size: 0.85rem;
+    }
+
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .reviews {
+        gap: 2rem;
+    }
+
+    .title {
+        font-size: 1.9rem;
+    }
+
+    .list {
+        gap: 1.5rem;
+    }
+
+    .review {
+        padding: 1.75rem 2rem;
+    }
+
+    .comment {
+        max-width: 1100px;
+
+        line-height: 1.6;
+    }
+
+}

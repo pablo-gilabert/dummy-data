@@ -1,0 +1,514 @@
+.orders {
+    width: 100%;
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 1.5rem 0.75rem 3rem;
+
+    box-sizing: border-box;
+}
+
+
+/* ================================
+   Title
+   ================================ */
+
+.title {
+    margin: 0 0 1.5rem;
+
+    font-size: 1.5rem;
+
+    font-weight: var(--font-semibold);
+
+    color: #000000;
+}
+
+
+/* ================================
+   Orders list
+   ================================ */
+
+.list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1rem;
+}
+
+
+/* ================================
+   Order card
+   ================================ */
+
+.card {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1rem;
+
+    padding: 1.25rem;
+
+    box-sizing: border-box;
+
+    background-color: #ffffff;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, 0.1);
+
+    border: 1px solid
+        rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 16px
+        rgba(0, 0, 0, 0.12);
+}
+
+
+/* ================================
+   Card header
+   ================================ */
+
+.cardHeader {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 0.4rem;
+}
+
+.cardHeader h2 {
+    margin: 0;
+
+    font-size: 1rem;
+
+    font-weight: var(--font-semibold);
+
+    color: #000000;
+}
+
+.cardHeader span {
+    flex-shrink: 0;
+
+    font-size: 0.85rem;
+
+    color: #000000;
+}
+
+
+/* ================================
+   Card body
+   ================================ */
+
+.cardBody {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 0.5rem;
+
+    padding-top: 0.75rem;
+
+    border-top: 1px solid
+        rgba(0, 0, 0, 0.1);
+}
+
+.cardBody p {
+    margin: 0;
+
+    color: #000000;
+
+    font-size: 0.9rem;
+}
+
+.total {
+    font-size: 1.1rem !important;
+
+    font-weight: var(--font-semibold);
+
+    color: #000000;
+}
+
+
+/* ================================
+   Buttons
+   ================================ */
+
+.viewButton,
+.button {
+    width: 100%;
+
+    padding: 0.8rem 1rem;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background-color: #16a34a;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 0.95rem;
+
+    font-weight: var(--font-semibold);
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.viewButton:hover,
+.button:hover {
+    background-color: #15803d;
+
+    transform: translateY(-1px);
+}
+
+.viewButton:active,
+.button:active {
+    transform: translateY(0);
+}
+
+
+/* ================================
+   Empty state
+   ================================ */
+
+.empty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 1rem;
+
+    min-height: 260px;
+
+    padding: 2rem;
+
+    box-sizing: border-box;
+
+    background-color: #ffffff;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, 0.1);
+
+    border: 1px solid
+        rgba(0, 0, 0, 0.08);
+
+    text-align: center;
+}
+
+.empty h2 {
+    margin: 0;
+
+    font-size: 1.3rem;
+
+    font-weight: var(--font-semibold);
+
+    color: #000000;
+}
+
+.empty p {
+    margin: 0;
+
+    color: #000000;
+
+    font-size: 0.9rem;
+
+    line-height: 1.5;
+}
+
+.empty .button {
+    max-width: 240px;
+}
+
+
+/* ================================
+   Tablet
+   768px+
+   ================================ */
+
+@media (min-width: 768px) {
+
+    .orders {
+        max-width: 1100px;
+
+        padding: 2rem 1.5rem 3.5rem;
+    }
+
+    .title {
+        margin-bottom: 2rem;
+
+        font-size: 1.75rem;
+    }
+
+    .list {
+        gap: 1.25rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+
+        border-radius: 12px;
+    }
+
+    .cardHeader {
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 1rem;
+    }
+
+    .cardHeader h2 {
+        font-size: 1.1rem;
+    }
+
+    .cardHeader span {
+        font-size: 0.9rem;
+    }
+
+    .cardBody {
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 1rem;
+    }
+
+    .cardBody p {
+        font-size: 0.95rem;
+    }
+
+    .total {
+        font-size: 1.2rem !important;
+    }
+
+    .viewButton {
+        width: auto;
+
+        min-width: 180px;
+
+        align-self: flex-end;
+
+        padding: 0.85rem 1.25rem;
+    }
+
+}
+
+
+/* ================================
+   Laptop
+   1024px+
+   ================================ */
+
+@media (min-width: 1024px) {
+
+    .orders {
+        max-width: 1150px;
+
+        padding: 2.5rem 2rem 4rem;
+    }
+
+    .title {
+        font-size: 1.85rem;
+    }
+
+    .card {
+        display: grid;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto
+            auto;
+
+        grid-template-areas:
+            "header body button";
+
+        align-items: center;
+
+        gap: 2rem;
+
+        padding: 1.5rem 1.75rem;
+    }
+
+    .cardHeader {
+        grid-area: header;
+
+        min-width: 0;
+    }
+
+    .cardBody {
+        grid-area: body;
+
+        min-width: 180px;
+
+        padding-top: 0;
+
+        border-top: none;
+    }
+
+    .viewButton {
+        grid-area: button;
+
+        align-self: center;
+    }
+
+}
+
+
+/* ================================
+   Desktop
+   1280px+
+   ================================ */
+
+@media (min-width: 1280px) {
+
+    .orders {
+        max-width: 1200px;
+
+        padding: 3rem 2rem 4rem;
+    }
+
+    .title {
+        margin-bottom: 2.25rem;
+
+        font-size: 2rem;
+    }
+
+    .list {
+        gap: 1.5rem;
+    }
+
+    .card {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto
+            190px;
+
+        gap: 2.5rem;
+
+        padding: 1.75rem 2rem;
+    }
+
+    .cardHeader h2 {
+        font-size: 1.15rem;
+    }
+
+    .cardBody {
+        min-width: 200px;
+    }
+
+    .viewButton {
+        width: 190px;
+    }
+
+    .empty {
+        min-height: 320px;
+
+        padding: 3rem;
+    }
+
+    .empty h2 {
+        font-size: 1.4rem;
+    }
+
+}
+
+
+/* ================================
+   Large Desktop
+   1920px+
+   ================================ */
+
+@media (min-width: 1920px) {
+
+    .orders {
+        max-width: 1400px;
+
+        padding: 4rem 3rem 5rem;
+    }
+
+    .title {
+        margin-bottom: 2.5rem;
+
+        font-size: 2.1rem;
+    }
+
+    .list {
+        gap: 1.5rem;
+    }
+
+    .card {
+        grid-template-columns:
+            minmax(0, 1fr)
+            240px
+            200px;
+
+        gap: 3rem;
+
+        padding: 2rem 2.25rem;
+
+        border-radius: 14px;
+    }
+
+    .cardHeader h2 {
+        font-size: 1.2rem;
+    }
+
+    .cardHeader span {
+        font-size: 0.95rem;
+    }
+
+    .cardBody {
+        min-width: 240px;
+    }
+
+    .cardBody p {
+        font-size: 1rem;
+    }
+
+    .total {
+        font-size: 1.25rem !important;
+    }
+
+    .viewButton {
+        width: 200px;
+
+        padding: 0.9rem 1.25rem;
+    }
+
+}
