@@ -59,7 +59,8 @@ const Checkout = () => {
     user,
   } = useAuth()
 
-  const navigate = useNavigate()
+  const navigate =
+    useNavigate()
 
   const [
     form,
@@ -68,8 +69,10 @@ const Checkout = () => {
     name: user
       ? `${user.firstName} ${user.lastName}`
       : "",
+
     email:
       user?.email ?? "",
+
     phone: "",
     address: "",
     city: "",
@@ -103,6 +106,7 @@ const Checkout = () => {
   ])
 
   if (items.length === 0) {
+
     return null
   }
 
@@ -202,10 +206,12 @@ const Checkout = () => {
       )
 
     if (!invalidItem) {
+
       return true
     }
 
     void Swal.fire({
+
       title:
         "Insufficient stock",
 
@@ -234,6 +240,7 @@ const Checkout = () => {
     event.preventDefault()
 
     if (isSubmitting) {
+
       return
     }
 
@@ -250,10 +257,12 @@ const Checkout = () => {
     }
 
     if (!validateForm()) {
+
       return
     }
 
     if (!validateStock()) {
+
       return
     }
 
@@ -289,6 +298,7 @@ const Checkout = () => {
       })
 
     if (!result.isConfirmed) {
+
       return
     }
 

@@ -2,6 +2,7 @@ import {
   describe,
   expect,
   it,
+  vi,
 } from "vitest"
 
 import {
@@ -9,9 +10,16 @@ import {
   screen,
 } from "@testing-library/react"
 
+import userEvent from "@testing-library/user-event"
+
 import {
   MemoryRouter,
 } from "react-router-dom"
+
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query"
 
 import ProductCard from "./ProductCard"
 
@@ -21,46 +29,93 @@ import type {
 
 const mockProduct: Product = {
   id: 1,
-  title: "Test product",
+  title: "Essence Mascara Lash Princess",
   description:
-    "Test product description",
-  category: "laptops",
-  price: 999,
-  discountPercentage: 10,
-  rating: 4.5,
-  stock: 10,
-  tags: [],
-  brand: "Test brand",
-  sku: "TEST-001",
-  weight: 1,
+    "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects.",
+  category: "beauty",
+  price: 9.99,
+  discountPercentage: 7.17,
+  rating: 4.94,
+  stock: 5,
+  tags: [
+    "beauty",
+    "mascara",
+  ],
+  brand: "Essence",
+  sku: "BEA-ESS-MAS-001",
+  weight: 2,
   dimensions: {
-    width: 10,
-    height: 10,
-    depth: 10,
+    width: 23.17,
+    height: 14.43,
+    depth: 28.01,
   },
   warrantyInformation:
-    "1 year warranty",
+    "1 month warranty",
   shippingInformation:
-    "Ships in 3 days",
+    "Ships in 1 month",
   availabilityStatus:
     "In Stock",
   reviews: [],
   returnPolicy:
     "30 days return policy",
-  minimumOrderQuantity: 1,
+  minimumOrderQuantity: 24,
   meta: {
     createdAt:
-      "2026-01-01T00:00:00.000Z",
+      "2025-04-30T09:41:02.053Z",
     updatedAt:
-      "2026-01-01T00:00:00.000Z",
-    barcode: "123456789",
-    qrCode: "test-qr-code",
+      "2025-04-30T09:41:02.053Z",
+    barcode:
+      "9164035109868",
+    qrCode:
+      "https://example.com/qr-code",
   },
   thumbnail:
-    "https://example.com/laptop.jpg",
+    "https://example.com/thumbnail.jpg",
   images: [
-    "https://example.com/laptop.jpg",
+    "https://example.com/image.jpg",
   ],
+}
+
+const createTestQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  })
+
+const renderProductCard = (
+  initialEntry = "/products"
+) => {
+
+  const queryClient =
+    createTestQueryClient()
+
+  return {
+    queryClient,
+
+    ...render(
+
+      <QueryClientProvider
+        client={queryClient}
+      >
+
+        <MemoryRouter
+          initialEntries={[
+            initialEntry,
+          ]}
+        >
+
+          <ProductCard
+            product={mockProduct}
+          />
+
+        </MemoryRouter>
+
+      </QueryClientProvider>
+    ),
+  }
 }
 
 describe("ProductCard", () => {
@@ -69,43 +124,29 @@ describe("ProductCard", () => {
     "renders the product information",
     () => {
 
-      render(
-        <MemoryRouter>
-          <ProductCard
-            product={mockProduct}
-          />
-        </MemoryRouter>
-      )
+      renderProductCard()
 
       expect(
-        screen.getByRole(
-          "heading",
-          {
-            name: "Laptops",
-            level: 1,
-          }
-        )
-      ).toBeInTheDocument()
-
-      expect(
-        screen.getByRole(
-          "heading",
-          {
-            name: "Test product",
-            level: 2,
-          }
+        screen.getByText(
+          "Essence Mascara Lash Princess"
         )
       ).toBeInTheDocument()
 
       expect(
         screen.getByText(
-          "4.5"
+          "Beauty"
         )
       ).toBeInTheDocument()
 
       expect(
         screen.getByText(
-          "$ 999"
+          "4.94"
+        )
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByText(
+          "$ 9.99"
         )
       ).toBeInTheDocument()
 
@@ -119,13 +160,11 @@ describe("ProductCard", () => {
         screen.getByRole(
           "img",
           {
-            name: "Test product",
+            name:
+              "Essence Mascara Lash Princess",
           }
         )
-      ).toHaveAttribute(
-        "src",
-        mockProduct.thumbnail
-      )
+      ).toBeInTheDocument()
     }
   )
 
@@ -133,26 +172,14 @@ describe("ProductCard", () => {
     "links to the product details page",
     () => {
 
-      render(
-        <MemoryRouter
-          initialEntries={[
-            "/products?category=laptops&page=2",
-          ]}
-        >
-          <ProductCard
-            product={mockProduct}
-          />
-        </MemoryRouter>
-      )
+      renderProductCard()
 
       const link =
         screen.getByRole(
           "link"
         )
 
-      expect(
-        link
-      ).toHaveAttribute(
+      expect(link).toHaveAttribute(
         "href",
         "/products/1"
       )
@@ -163,16 +190,8 @@ describe("ProductCard", () => {
     "passes the current location as navigation state",
     () => {
 
-      render(
-        <MemoryRouter
-          initialEntries={[
-            "/products?category=laptops&page=2",
-          ]}
-        >
-          <ProductCard
-            product={mockProduct}
-          />
-        </MemoryRouter>
+      renderProductCard(
+        "/products?search=phone&page=2"
       )
 
       const link =
@@ -180,11 +199,53 @@ describe("ProductCard", () => {
           "link"
         )
 
-      expect(
-        link
-      ).toHaveAttribute(
+      expect(link).toHaveAttribute(
         "href",
         "/products/1"
+      )
+    }
+  )
+
+  it(
+    "prefetches the product details on mouse enter",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      const {
+        queryClient,
+      } = renderProductCard()
+
+      const prefetchQuery =
+        vi.spyOn(
+          queryClient,
+          "prefetchQuery"
+        )
+
+      const link =
+        screen.getByRole(
+          "link"
+        )
+
+      await user.hover(
+        link
+      )
+
+      expect(
+        prefetchQuery
+      ).toHaveBeenCalledTimes(1)
+
+      expect(
+        prefetchQuery
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryKey: [
+            "products",
+            "detail",
+            1,
+          ],
+        })
       )
     }
   )

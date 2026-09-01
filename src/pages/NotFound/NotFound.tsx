@@ -6,28 +6,41 @@ import styles from "./NotFound.module.css"
 
 const NotFound = () => {
 
-  const navigate = useNavigate()
+  const navigate =
+    useNavigate()
 
   const handleBackToProducts = () => {
 
-    navigate("/products")
+    navigate(
+      "/products"
+    )
   }
 
   return (
 
-    <main className={styles.notFound}>
+    <main
+      className={styles.notFound}
+    >
 
-      <section className={styles.card}>
+      <section
+        className={styles.card}
+    >
 
-        <p className={styles.code}>
+        <p
+          className={styles.code}
+        >
           404
         </p>
 
-        <h1 className={styles.title}>
+        <h1
+          className={styles.title}
+        >
           Page not found
         </h1>
 
-        <p className={styles.message}>
+        <p
+          className={styles.message}
+        >
           The page you are looking for
           does not exist.
         </p>
@@ -35,7 +48,9 @@ const NotFound = () => {
         <button
           className={styles.button}
           type="button"
-          onClick={handleBackToProducts}
+          onClick={
+            handleBackToProducts
+          }
         >
           Back to products
         </button>

@@ -15,6 +15,8 @@ import userEvent from "@testing-library/user-event"
 
 import {
   MemoryRouter,
+  Route,
+  Routes,
 } from "react-router-dom"
 
 import CartSummary from "./CartSummary"
@@ -49,17 +51,31 @@ const mockedSwalFire =
 
 const mockProduct = {
   id: 1,
-  title: "Test product",
+
+  title:
+    "Test product",
+
   description:
     "Test product description",
-  category: "laptops",
+
+  category:
+    "laptops",
+
   price: 100,
+
   discountPercentage: 10,
+
   rating: 4.5,
+
   stock: 10,
+
   tags: [],
-  brand: "Test brand",
-  sku: "TEST-001",
+
+  brand:
+    "Test brand",
+
+  sku:
+    "TEST-001",
 
   weight: 1,
 
@@ -137,18 +153,33 @@ describe(
       mockedUseCart
         .mockReturnValue({
           items: mockItems,
-          addItem: vi.fn(),
-          removeItem: vi.fn(),
-          clearItem: vi.fn(),
-          clearCart: vi.fn(),
+
+          addItem:
+            vi.fn(),
+
+          removeItem:
+            vi.fn(),
+
+          clearItem:
+            vi.fn(),
+
+          clearCart:
+            vi.fn(),
         })
 
       mockedSwalFire
         .mockResolvedValue({
-          isConfirmed: false,
-          isDenied: false,
-          isDismissed: true,
-          value: undefined,
+          isConfirmed:
+            false,
+
+          isDenied:
+            false,
+
+          isDismissed:
+            true,
+
+          value:
+            undefined,
         })
     })
 
@@ -216,7 +247,8 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Checkout",
+              name:
+                "Checkout",
             }
           )
         ).toBeEnabled()
@@ -239,7 +271,25 @@ describe(
             ]}
           >
 
-            <CartSummary />
+            <Routes>
+
+              <Route
+                path="/cart"
+                element={
+                  <CartSummary />
+                }
+              />
+
+              <Route
+                path="/checkout"
+                element={
+                  <h1>
+                    Checkout page
+                  </h1>
+                }
+              />
+
+            </Routes>
 
           </MemoryRouter>
         )
@@ -248,16 +298,18 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Checkout",
+              name:
+                "Checkout",
             }
           )
         )
 
         expect(
-          screen.getByRole(
-            "button",
+          await screen.findByRole(
+            "heading",
             {
-              name: "Checkout",
+              name:
+                "Checkout page",
             }
           )
         ).toBeInTheDocument()
@@ -278,7 +330,8 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Clear cart",
+              name:
+                "Clear cart",
             }
           )
         )
@@ -287,6 +340,7 @@ describe(
           mockedSwalFire
         ).toHaveBeenCalledWith(
           expect.objectContaining({
+
             title:
               "Clear cart?",
 
@@ -304,6 +358,7 @@ describe(
 
             cancelButtonText:
               "Cancel",
+
           })
         )
 
@@ -322,26 +377,48 @@ describe(
 
         mockedUseCart
           .mockReturnValue({
-            items: mockItems,
-            addItem: vi.fn(),
-            removeItem: vi.fn(),
-            clearItem: vi.fn(),
+            items:
+              mockItems,
+
+            addItem:
+              vi.fn(),
+
+            removeItem:
+              vi.fn(),
+
+            clearItem:
+              vi.fn(),
+
             clearCart,
           })
 
         mockedSwalFire
           .mockResolvedValueOnce({
-            isConfirmed: true,
-            isDenied: false,
-            isDismissed: false,
-            value: undefined,
+            isConfirmed:
+              true,
+
+            isDenied:
+              false,
+
+            isDismissed:
+              false,
+
+            value:
+              undefined,
           })
 
           .mockResolvedValueOnce({
-            isConfirmed: true,
-            isDenied: false,
-            isDismissed: false,
-            value: undefined,
+            isConfirmed:
+              true,
+
+            isDenied:
+              false,
+
+            isDismissed:
+              false,
+
+            value:
+              undefined,
           })
 
         renderCartSummary()
@@ -350,7 +427,8 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Clear cart",
+              name:
+                "Clear cart",
             }
           )
         )
@@ -371,16 +449,91 @@ describe(
     )
 
     it(
+      "does not clear the cart when removal is cancelled",
+      async () => {
+
+        const user =
+          userEvent.setup()
+
+        const clearCart =
+          vi.fn()
+
+        mockedUseCart
+          .mockReturnValue({
+            items:
+              mockItems,
+
+            addItem:
+              vi.fn(),
+
+            removeItem:
+              vi.fn(),
+
+            clearItem:
+              vi.fn(),
+
+            clearCart,
+          })
+
+        mockedSwalFire
+          .mockResolvedValueOnce({
+            isConfirmed:
+              false,
+
+            isDenied:
+              false,
+
+            isDismissed:
+              true,
+
+            value:
+              undefined,
+          })
+
+        renderCartSummary()
+
+        await user.click(
+          screen.getByRole(
+            "button",
+            {
+              name:
+                "Clear cart",
+            }
+          )
+        )
+
+        expect(
+          clearCart
+        ).not.toHaveBeenCalled()
+
+        expect(
+          mockedSwalFire
+        ).toHaveBeenCalledTimes(
+          1
+        )
+
+      }
+    )
+
+    it(
       "disables checkout and clear cart when the cart is empty",
       () => {
 
         mockedUseCart
           .mockReturnValue({
             items: [],
-            addItem: vi.fn(),
-            removeItem: vi.fn(),
-            clearItem: vi.fn(),
-            clearCart: vi.fn(),
+
+            addItem:
+              vi.fn(),
+
+            removeItem:
+              vi.fn(),
+
+            clearItem:
+              vi.fn(),
+
+            clearCart:
+              vi.fn(),
           })
 
         renderCartSummary()
@@ -389,7 +542,8 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Checkout",
+              name:
+                "Checkout",
             }
           )
         ).toBeDisabled()
@@ -398,7 +552,8 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Clear cart",
+              name:
+                "Clear cart",
             }
           )
         ).toBeDisabled()
@@ -413,10 +568,18 @@ describe(
         mockedUseCart
           .mockReturnValue({
             items: [],
-            addItem: vi.fn(),
-            removeItem: vi.fn(),
-            clearItem: vi.fn(),
-            clearCart: vi.fn(),
+
+            addItem:
+              vi.fn(),
+
+            removeItem:
+              vi.fn(),
+
+            clearItem:
+              vi.fn(),
+
+            clearCart:
+              vi.fn(),
           })
 
         renderCartSummary()
@@ -425,7 +588,8 @@ describe(
           screen.getByRole(
             "button",
             {
-              name: "Clear cart",
+              name:
+                "Clear cart",
             }
           )
 

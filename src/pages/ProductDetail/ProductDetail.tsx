@@ -1,23 +1,28 @@
-import { useQuery } from "@tanstack/react-query"
-
 import {
   useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom"
 
-import { getProduct } from "../../services/products"
+import {
+  useProduct,
+} from "../../hooks/useProduct"
 
-import { useCart } from "../../CartContext/useCart"
+import {
+  useCart,
+} from "../../CartContext/useCart"
 
 import LoadingState from "../../components/LoadingState/LoadingState"
 import ErrorState from "../../components/ErrorState/ErrorState"
 import ProductGallery from "../../components/ProductGallery/ProductGallery"
 import ProductReviews from "../../components/ProductReviews/ProductReviews"
 
-import { formatCategory } from "../../utils/formatCategory"
+import {
+  formatCategory,
+} from "../../utils/formatCategory"
 
 import styles from "./ProductDetail.module.css"
+
 
 const ProductDetail = () => {
 
@@ -25,60 +30,62 @@ const ProductDetail = () => {
     id,
   } = useParams()
 
+
   const location =
     useLocation()
 
+
   const navigate =
     useNavigate()
+
 
   const {
     addItem,
   } = useCart()
 
+
   const productId =
     Number(id)
+
 
   const {
     data,
     isLoading,
     isError,
     error,
-  } = useQuery({
+  } =
+    useProduct(
+      productId
+    )
 
-    queryKey: [
-      "product",
-      productId,
-    ],
-
-    queryFn: () => (
-      getProduct(productId)
-    ),
-
-    enabled:
-      Number.isInteger(productId) &&
-      productId > 0,
-
-  })
 
   const handleBack = () => {
 
-    if (location.state?.from) {
+    if (
+      location.state?.from
+    ) {
 
       navigate(
         location.state.from
       )
 
       return
+
     }
+
 
     navigate(
       "/products"
     )
+
   }
+
 
   if (
     !id ||
-    !Number.isInteger(productId) ||
+    !Number.isInteger(
+      productId
+    ) ||
     productId <= 0
   ) {
 
@@ -91,7 +98,9 @@ const ProductDetail = () => {
         }
       />
     )
+
   }
+
 
   if (isLoading) {
 
@@ -100,7 +109,9 @@ const ProductDetail = () => {
         message="Loading product..."
       />
     )
+
   }
+
 
   if (isError) {
 
@@ -109,7 +120,9 @@ const ProductDetail = () => {
         error={error}
       />
     )
+
   }
+
 
   if (!data) {
 
@@ -118,50 +131,77 @@ const ProductDetail = () => {
         Product not found.
       </p>
     )
+
   }
+
 
   const originalPrice =
     data.price /
-    (1 - data.discountPercentage / 100)
+    (
+      1 -
+      data.discountPercentage /
+      100
+    )
+
 
   return (
 
     <main
-      className={styles.main}
+      className={
+        styles.main
+      }
     >
 
       <button
-        className={styles.backButton}
+        className={
+          styles.backButton
+        }
         type="button"
-        onClick={handleBack}
+        onClick={
+          handleBack
+        }
       >
         Back to products
       </button>
+
 
       <ProductGallery
         product={data}
       />
 
+
       <section
-        className={styles.info}
+        className={
+          styles.info
+        }
       >
 
         <p
-          className={styles.category}
+          className={
+            styles.category
+          }
         >
-          {formatCategory(
-            data.category
-          )}
+          {
+            formatCategory(
+              data.category
+            )
+          }
         </p>
 
+
         <h1
-          className={styles.title}
+          className={
+            styles.title
+          }
         >
           {data.title}
         </h1>
 
+
         <div
-          className={styles.rating}
+          className={
+            styles.rating
+          }
         >
 
           <span>
@@ -174,6 +214,7 @@ const ProductDetail = () => {
 
         </div>
 
+
         <div
           className={
             styles.priceContainer
@@ -181,10 +222,13 @@ const ProductDetail = () => {
         >
 
           <span
-            className={styles.price}
+            className={
+              styles.price
+            }
           >
             $ {data.price.toFixed(2)}
           </span>
+
 
           {data.discountPercentage > 0 && (
 
@@ -195,15 +239,22 @@ const ProductDetail = () => {
                   styles.originalPrice
                 }
               >
-                $ {originalPrice.toFixed(2)}
+                $ {
+                  originalPrice.toFixed(2)
+                }
               </span>
 
+
               <span
-                className={styles.discount}
+                className={
+                  styles.discount
+                }
               >
-                {Math.round(
-                  data.discountPercentage
-                )}% OFF
+                {
+                  Math.round(
+                    data.discountPercentage
+                  )
+                }% OFF
               </span>
 
             </>
@@ -212,19 +263,27 @@ const ProductDetail = () => {
 
         </div>
 
+
         <div
-          className={styles.stock}
+          className={
+            styles.stock
+          }
         >
 
           <span>
-            {data.availabilityStatus}
+            {
+              data.availabilityStatus
+            }
           </span>
 
           <span>
-            {data.stock} units available
+            {
+              data.stock
+            } units available
           </span>
 
         </div>
+
 
         <p
           className={
@@ -236,8 +295,11 @@ const ProductDetail = () => {
 
       </section>
 
+
       <button
-        className={styles.buttonCart}
+        className={
+          styles.buttonCart
+        }
         type="button"
         onClick={() =>
           addItem(data)
@@ -246,12 +308,18 @@ const ProductDetail = () => {
         Add to cart
       </button>
 
+
       <ProductReviews
-        reviews={data.reviews}
+        reviews={
+          data.reviews
+        }
       />
 
     </main>
+
   )
+
 }
+
 
 export default ProductDetail

@@ -1,4 +1,5 @@
 import {
+  beforeEach,
   describe,
   expect,
   it,
@@ -45,6 +46,11 @@ vi.mock(
 
 describe("NotFound", () => {
 
+  beforeEach(() => {
+
+    vi.clearAllMocks()
+  })
+
   it(
     "renders the not found page",
     () => {
@@ -65,7 +71,8 @@ describe("NotFound", () => {
         screen.getByRole(
           "heading",
           {
-            name: "Page not found",
+            name:
+              "Page not found",
           }
         )
       ).toBeInTheDocument()
@@ -80,7 +87,8 @@ describe("NotFound", () => {
         screen.getByRole(
           "button",
           {
-            name: "Back to products",
+            name:
+              "Back to products",
           }
         )
       ).toBeInTheDocument()
@@ -104,9 +112,16 @@ describe("NotFound", () => {
         screen.getByRole(
           "button",
           {
-            name: "Back to products",
+            name:
+              "Back to products",
           }
         )
+      )
+
+      expect(
+        mockedNavigate
+      ).toHaveBeenCalledTimes(
+        1
       )
 
       expect(

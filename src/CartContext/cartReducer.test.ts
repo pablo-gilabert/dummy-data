@@ -108,6 +108,44 @@ describe(
     )
 
     it(
+      "does not add a product with no stock",
+      () => {
+
+        const outOfStockProduct:
+          Product = {
+            ...product,
+
+            stock: 0,
+
+            availabilityStatus:
+              "Out of Stock",
+          }
+
+        const state =
+          cartReducer(
+            initialCartState,
+            {
+              type:
+                CartActionType.ADD_ITEM,
+              payload:
+                outOfStockProduct,
+            }
+          )
+
+        expect(
+          state
+        ).toBe(
+          initialCartState
+        )
+
+        expect(
+          state.items
+        ).toHaveLength(0)
+
+      }
+    )
+
+    it(
       "increases the quantity of an existing product",
       () => {
 

@@ -13,9 +13,11 @@ import userEvent from "@testing-library/user-event"
 
 import ProductGallery from "./ProductGallery"
 
-import type { Product } from "../../types/Product"
+import type {
+  Product,
+} from "../../types/Product"
 
-const mockProduct = {
+const mockProduct: Product = {
   id: 1,
   title: "Laptop",
   description:
@@ -29,38 +31,52 @@ const mockProduct = {
   brand: "Tech Brand",
   sku: "LAPTOP-001",
   weight: 2,
+
   dimensions: {
     width: 30,
     height: 2,
     depth: 20,
   },
+
   warrantyInformation:
     "1 year warranty",
+
   shippingInformation:
     "Ships in 2 days",
+
   availabilityStatus:
     "In Stock",
+
   reviews: [],
+
   returnPolicy:
     "30 days return policy",
+
   minimumOrderQuantity: 1,
+
   meta: {
     createdAt:
       "2025-01-01T00:00:00.000Z",
+
     updatedAt:
       "2025-01-01T00:00:00.000Z",
-    barcode: "123456789",
+
+    barcode:
+      "123456789",
+
     qrCode:
       "https://example.com/qr",
   },
+
   thumbnail:
     "https://example.com/laptop-thumbnail.jpg",
+
   images: [
     "https://example.com/laptop-1.jpg",
     "https://example.com/laptop-2.jpg",
     "https://example.com/laptop-3.jpg",
   ],
-} satisfies Product
+}
 
 describe(
   "ProductGallery",
@@ -177,6 +193,19 @@ describe(
           "aria-pressed",
           "false"
         )
+
+        expect(
+          screen.getByRole(
+            "button",
+            {
+              name:
+                "View product image 3",
+            }
+          )
+        ).toHaveAttribute(
+          "aria-pressed",
+          "false"
+        )
       }
     )
 
@@ -240,6 +269,19 @@ describe(
           "aria-pressed",
           "false"
         )
+
+        expect(
+          screen.getByRole(
+            "button",
+            {
+              name:
+                "View product image 3",
+            }
+          )
+        ).toHaveAttribute(
+          "aria-pressed",
+          "false"
+        )
       }
     )
 
@@ -247,7 +289,7 @@ describe(
       "uses the thumbnail when the product has no images",
       () => {
 
-        const productWithoutImages = {
+        const productWithoutImages: Product = {
           ...mockProduct,
           images: [],
         }
@@ -287,7 +329,7 @@ describe(
       "does not render thumbnails when there is only one image",
       () => {
 
-        const productWithOneImage = {
+        const productWithOneImage: Product = {
           ...mockProduct,
           images: [
             "https://example.com/only-image.jpg",

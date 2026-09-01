@@ -18,7 +18,6 @@ import type {
 import {
   getCurrentUser,
   loginUser,
-  refreshAuthToken,
 } from "../services/auth"
 
 import {
@@ -31,14 +30,17 @@ import {
   AuthContext,
 } from "./authContext"
 
+
 interface AuthProviderProps {
   children: ReactNode
 }
+
 
 interface LoginCredentials {
   username: string
   password: string
 }
+
 
 const AuthProvider = ({
   children,
@@ -51,10 +53,12 @@ const AuthProvider = ({
     getStoredUser()
   )
 
+
   const [
     isLoading,
     setIsLoading,
   ] = useState(true)
+
 
   const loginMutation =
     useMutation({
@@ -83,6 +87,7 @@ const AuthProvider = ({
 
     })
 
+
   useEffect(() => {
 
     const validateSession =
@@ -91,6 +96,7 @@ const AuthProvider = ({
         const storedUser =
           getStoredUser()
 
+
         if (!storedUser) {
 
           setIsLoading(false)
@@ -98,10 +104,16 @@ const AuthProvider = ({
           return
         }
 
+
         try {
 
           const currentUser =
             await getCurrentUser()
+
+
+          const latestStoredUser =
+            getStoredUser()
+
 
           const authenticatedUser:
             User = {
@@ -109,11 +121,14 @@ const AuthProvider = ({
             ...currentUser,
 
             accessToken:
+              latestStoredUser?.accessToken ??
               storedUser.accessToken,
 
             refreshToken:
+              latestStoredUser?.refreshToken ??
               storedUser.refreshToken,
           }
+
 
           setStoredUser(
             authenticatedUser
@@ -125,49 +140,22 @@ const AuthProvider = ({
 
         } catch {
 
-          try {
+          clearStoredUser()
 
-            const refreshedTokens =
-              await refreshAuthToken(
-                storedUser.refreshToken
-              )
-
-            const refreshedUser:
-              User = {
-
-              ...storedUser,
-
-              accessToken:
-                refreshedTokens.accessToken,
-
-              refreshToken:
-                refreshedTokens.refreshToken,
-            }
-
-            setStoredUser(
-              refreshedUser
-            )
-
-            setUser(
-              refreshedUser
-            )
-
-          } catch {
-
-            clearStoredUser()
-
-            setUser(null)
-          }
+          setUser(null)
 
         } finally {
 
           setIsLoading(false)
+
         }
       }
+
 
     void validateSession()
 
   }, [])
+
 
   const login = async (
     username: string,
@@ -175,10 +163,13 @@ const AuthProvider = ({
   ) => {
 
     await loginMutation.mutateAsync({
+
       username,
       password,
+
     })
   }
+
 
   const logout = () => {
 
@@ -187,7 +178,9 @@ const AuthProvider = ({
     setUser(null)
 
     loginMutation.reset()
+
   }
+
 
   return (
 
@@ -203,7 +196,9 @@ const AuthProvider = ({
       {children}
 
     </AuthContext.Provider>
+
   )
 }
+
 
 export default AuthProvider

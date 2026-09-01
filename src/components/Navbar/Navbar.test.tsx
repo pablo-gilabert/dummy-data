@@ -56,6 +56,9 @@ const mockedUseAuth =
 const mockLogout =
   vi.fn()
 
+const mockedNavigate =
+  vi.fn()
+
 const mockUser = {
   id: 1,
   username: "emilys",
@@ -111,7 +114,8 @@ const mockProduct: Product = {
       "2026-01-01T00:00:00.000Z",
     updatedAt:
       "2026-01-01T00:00:00.000Z",
-    barcode: "123456789",
+    barcode:
+      "123456789",
     qrCode:
       "test-qr-code",
   },
@@ -130,6 +134,28 @@ const mockCartItems = [
     quantity: 2,
   },
 ]
+
+vi.mock(
+  "react-router-dom",
+  async () => {
+
+    const actual =
+      await vi.importActual<
+        typeof import(
+          "react-router-dom"
+        )
+      >(
+        "react-router-dom"
+      )
+
+    return {
+      ...actual,
+
+      useNavigate: () =>
+        mockedNavigate,
+    }
+  }
+)
 
 describe("Navbar", () => {
 
@@ -426,15 +452,6 @@ describe("Navbar", () => {
         )
       )
 
-      expect(
-        screen.getByRole(
-          "button",
-          {
-            name: "Close menu",
-          }
-        )
-      ).toBeInTheDocument()
-
       await user.click(
         screen.getByRole(
           "link",
@@ -447,6 +464,82 @@ describe("Navbar", () => {
       expect(
         screen.getByText(
           "Products page"
+        )
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      ).toBeInTheDocument()
+    }
+  )
+
+  it(
+    "navigates to the cart and closes the menu",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            "/",
+          ]}
+        >
+
+          <Navbar />
+
+          <Routes>
+
+            <Route
+              path="/"
+              element={
+                <div>
+                  Home page
+                </div>
+              }
+            />
+
+            <Route
+              path="/cart"
+              element={
+                <div>
+                  Cart page
+                </div>
+              }
+            />
+
+          </Routes>
+
+        </MemoryRouter>
+      )
+
+      await user.click(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      )
+
+      await user.click(
+        screen.getByRole(
+          "link",
+          {
+            name: "Shopping cart with 2 items",
+          }
+        )
+      )
+
+      expect(
+        screen.getByText(
+          "Cart page"
         )
       ).toBeInTheDocument()
 
@@ -585,36 +678,8 @@ describe("Navbar", () => {
         userEvent.setup()
 
       render(
-        <MemoryRouter
-          initialEntries={[
-            "/",
-          ]}
-        >
-
+        <MemoryRouter>
           <Navbar />
-
-          <Routes>
-
-            <Route
-              path="/"
-              element={
-                <div>
-                  Current page
-                </div>
-              }
-            />
-
-            <Route
-              path="/login"
-              element={
-                <div>
-                  Login page
-                </div>
-              }
-            />
-
-          </Routes>
-
         </MemoryRouter>
       )
 
@@ -641,8 +706,20 @@ describe("Navbar", () => {
       ).toHaveBeenCalledTimes(1)
 
       expect(
-        screen.getByText(
-          "Login page"
+        mockedNavigate
+      ).toHaveBeenCalledWith(
+        "/login",
+        {
+          replace: true,
+        }
+      )
+
+      expect(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
         )
       ).toBeInTheDocument()
     }
@@ -688,6 +765,241 @@ describe("Navbar", () => {
           "Emily"
         )
       ).not.toBeInTheDocument()
+    }
+  )
+
+  it(
+    "navigates to login and closes the menu when there is no user",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      mockedUseAuth.mockReturnValue({
+        user: null,
+        isLoading: false,
+        login: vi.fn(),
+        logout: mockLogout,
+      })
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            "/",
+          ]}
+        >
+
+          <Navbar />
+
+          <Routes>
+
+            <Route
+              path="/"
+              element={
+                <div>
+                  Home page
+                </div>
+              }
+            />
+
+            <Route
+              path="/login"
+              element={
+                <div>
+                  Login page
+                </div>
+              }
+            />
+
+          </Routes>
+
+        </MemoryRouter>
+      )
+
+      await user.click(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      )
+
+      await user.click(
+        screen.getByRole(
+          "link",
+          {
+            name: "Login",
+          }
+        )
+      )
+
+      expect(
+        screen.getByText(
+          "Login page"
+        )
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      ).toBeInTheDocument()
+    }
+  )
+
+  it(
+    "navigates to Orders and closes the menu",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            "/",
+          ]}
+        >
+
+          <Navbar />
+
+          <Routes>
+
+            <Route
+              path="/"
+              element={
+                <div>
+                  Home page
+                </div>
+              }
+            />
+
+            <Route
+              path="/orders"
+              element={
+                <div>
+                  Orders page
+                </div>
+              }
+            />
+
+          </Routes>
+
+        </MemoryRouter>
+      )
+
+      await user.click(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      )
+
+      await user.click(
+        screen.getByRole(
+          "link",
+          {
+            name: "Orders",
+          }
+        )
+      )
+
+      expect(
+        screen.getByText(
+          "Orders page"
+        )
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      ).toBeInTheDocument()
+    }
+  )
+
+  it(
+    "navigates to Home and closes the menu",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            "/products",
+          ]}
+        >
+
+          <Navbar />
+
+          <Routes>
+
+            <Route
+              path="/"
+              element={
+                <div>
+                  Home page
+                </div>
+              }
+            />
+
+            <Route
+              path="/products"
+              element={
+                <div>
+                  Products page
+                </div>
+              }
+            />
+
+          </Routes>
+
+        </MemoryRouter>
+      )
+
+      await user.click(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      )
+
+      await user.click(
+        screen.getByRole(
+          "link",
+          {
+            name: "Home",
+          }
+        )
+      )
+
+      expect(
+        screen.getByText(
+          "Home page"
+        )
+      ).toBeInTheDocument()
+
+      expect(
+        screen.getByRole(
+          "button",
+          {
+            name: "Open menu",
+          }
+        )
+      ).toBeInTheDocument()
     }
   )
 })

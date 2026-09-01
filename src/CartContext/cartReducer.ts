@@ -1,17 +1,22 @@
-import type { CartItem } from "../types/CartItem"
+import type {
+  CartItem,
+} from "../types/CartItem"
 
 import {
   CartActionType,
   type CartAction,
 } from "./cartActions"
 
+
 export interface CartState {
   items: CartItem[]
 }
 
+
 export const initialCartState: CartState = {
   items: [],
 }
+
 
 export const cartReducer = (
   state: CartState,
@@ -30,6 +35,12 @@ export const cartReducer = (
         )
 
       if (!existingItem) {
+
+        if (
+          action.payload.stock <= 0
+        ) {
+          return state
+        }
 
         return {
           ...state,
