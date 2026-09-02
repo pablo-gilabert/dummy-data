@@ -528,6 +528,170 @@ describe(
 
 
         it(
+          "uses the search endpoint when only a search query is provided",
+          async () => {
+
+            mockedApi.mockResolvedValue(
+              createProductResponse()
+            )
+
+            await getFilteredProducts({
+              search:
+                "laptop",
+
+              limit:
+                10,
+
+              skip:
+                0,
+            })
+
+            expect(
+              mockedApi
+            ).toHaveBeenCalledWith(
+              "/products/search?q=laptop&limit=0"
+            )
+
+          }
+        )
+
+
+        it(
+          "applies search sorting locally instead of sending sort parameters to the API",
+          async () => {
+
+            const products = [
+
+              createProduct({
+                id:
+                  1,
+
+                price:
+                  300,
+              }),
+
+              createProduct({
+                id:
+                  2,
+
+                price:
+                  100,
+              }),
+
+              createProduct({
+                id:
+                  3,
+
+                price:
+                  200,
+              }),
+
+            ]
+
+            mockedApi.mockResolvedValue(
+              createProductResponse(
+                products
+              )
+            )
+
+            const result =
+              await getFilteredProducts({
+                search:
+                  "product",
+
+                limit:
+                  10,
+
+                skip:
+                  0,
+
+                sort:
+                  "price-desc",
+              })
+
+            expect(
+              mockedApi
+            ).toHaveBeenCalledWith(
+              "/products/search?q=product&limit=0"
+            )
+
+            expect(
+              result.products.map(
+                product =>
+                  product.price
+              )
+            ).toEqual([
+              300,
+              200,
+              100,
+            ])
+
+          }
+        )
+
+
+        it(
+          "passes sorting parameters to the category endpoint",
+          async () => {
+
+            mockedApi.mockResolvedValue(
+              createProductResponse()
+            )
+
+            await getFilteredProducts({
+              category:
+                "laptops",
+
+              limit:
+                10,
+
+              skip:
+                0,
+
+              sort:
+                "price-desc",
+            })
+
+            expect(
+              mockedApi
+            ).toHaveBeenCalledWith(
+              "/products/category/laptops?limit=10&skip=0&sortBy=price&order=desc"
+            )
+
+          }
+        )
+
+
+        it(
+          "propagates API errors",
+          async () => {
+
+            const error =
+              new Error(
+                "Failed to fetch products"
+              )
+
+            mockedApi.mockRejectedValue(
+              error
+            )
+
+            await expect(
+              getFilteredProducts({
+                limit:
+                  10,
+
+                skip:
+                  0,
+              })
+            ).rejects.toThrow(
+              "Failed to fetch products"
+            )
+
+          }
+        )
+
+
+        it(
           "loads all search results before applying category filtering and pagination",
           async () => {
 

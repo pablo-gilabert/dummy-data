@@ -350,6 +350,148 @@ describe(
 
 
     it(
+      "does not add a product when it is out of stock",
+      async () => {
+
+        const user =
+          userEvent.setup()
+
+        const outOfStockProduct: Product = {
+          ...product,
+
+          id: 3,
+
+          title:
+            "Out of Stock Product",
+
+          stock: 0,
+
+          sku:
+            "TEST-003",
+        }
+
+        const TestOutOfStockCart = () => {
+
+          const {
+            items,
+            addItem,
+          } = useCart()
+
+          return (
+            <div>
+
+              <span>
+                {items.length}
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  addItem(
+                    outOfStockProduct
+                  )
+                }
+              >
+                Add out of stock
+              </button>
+
+            </div>
+          )
+        }
+
+        render(
+          <AuthContext.Provider
+            value={{
+              user:
+                createUser(1),
+
+              isLoading:
+                false,
+
+              login:
+                async () => {},
+
+              logout:
+                () => {},
+            }}
+          >
+            <CartProvider>
+              <TestOutOfStockCart />
+            </CartProvider>
+          </AuthContext.Provider>
+        )
+
+        await user.click(
+          screen.getByRole(
+            "button",
+            {
+              name:
+                "Add out of stock",
+            }
+          )
+        )
+
+        expect(
+          screen.getByText(
+            "0"
+          )
+        ).toBeInTheDocument()
+
+        expect(
+          localStorage.getItem(
+            "cart_1"
+          )
+        ).toBeNull()
+
+      }
+    )
+
+
+    it(
+      "does not persist changes when removing a product that is not in the cart",
+      async () => {
+
+        const user =
+          userEvent.setup()
+
+        render(
+          <TestProvider
+            user={
+              createUser(1)
+            }
+          />
+        )
+
+        await screen.findByText(
+          "0"
+        )
+
+        await user.click(
+          screen.getByRole(
+            "button",
+            {
+              name: "Remove",
+            }
+          )
+        )
+
+        expect(
+          screen.getByText(
+            "0"
+          )
+        ).toBeInTheDocument()
+
+        expect(
+          localStorage.getItem(
+            "cart_1"
+          )
+        ).toBeNull()
+
+      }
+    )
+
+
+    it(
       "persists the cart using the user's id",
       async () => {
 

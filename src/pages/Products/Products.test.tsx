@@ -301,6 +301,52 @@ describe("Products", () => {
   )
 
   it(
+    "trims the search before submitting it",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      renderProducts()
+
+      await waitForProductsToLoad()
+
+      const searchInput =
+        screen.getByRole(
+          "searchbox"
+        )
+
+      await user.type(
+        searchInput,
+        "   laptop   "
+      )
+
+      await user.click(
+        screen.getByRole(
+          "button",
+          {
+            name: "Search",
+          }
+        )
+      )
+
+      await waitFor(() => {
+
+        expect(
+          mockedGetFilteredProducts
+        ).toHaveBeenLastCalledWith({
+          search: "laptop",
+          category: "",
+          limit: 12,
+          skip: 0,
+          sort: "",
+        })
+
+      })
+    }
+  )
+
+  it(
     "submits search while preserving category and sort",
     async () => {
 
@@ -516,6 +562,55 @@ describe("Products", () => {
         })
 
       })
+    }
+  )
+
+  it(
+    "clears the sort when selecting Default",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      renderProducts(
+        "/products?search=laptop&category=laptops&sort=price-desc&page=3"
+      )
+
+      await waitForProductsToLoad()
+
+      const sortSelect =
+        screen.getByLabelText(
+          "Sort by:"
+        )
+
+      expect(
+        sortSelect
+      ).toHaveValue(
+        "price-desc"
+      )
+
+      await user.selectOptions(
+        sortSelect,
+        ""
+      )
+
+      await waitFor(() => {
+
+        expect(
+          mockedGetFilteredProducts
+        ).toHaveBeenLastCalledWith({
+          search: "laptop",
+          category: "laptops",
+          limit: 12,
+          skip: 0,
+          sort: "",
+        })
+
+      })
+
+      expect(
+        sortSelect
+      ).toHaveValue("")
     }
   )
 
@@ -869,7 +964,9 @@ describe("Products", () => {
       let resolveRequest:
         (
           value: {
-            products: typeof mockProduct[]
+            products:
+              typeof mockProduct[]
+
             total: number
             skip: number
             limit: number
@@ -914,6 +1011,108 @@ describe("Products", () => {
       })
 
       await waitForProductsToLoad()
+    }
+  )
+
+  it(
+    "shows the updating state while fetching new products",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      let resolveRequest:
+        (
+          value: {
+            products:
+              typeof mockProduct[]
+
+            total: number
+            skip: number
+            limit: number
+          }
+        ) => void
+
+      const initialRequest =
+        Promise.resolve({
+          products: [
+            mockProduct,
+          ],
+
+          total: 24,
+
+          skip: 0,
+
+          limit: 12,
+        })
+
+      mockedGetFilteredProducts
+        .mockReturnValueOnce(
+          initialRequest as ReturnType<
+            typeof getFilteredProducts
+          >
+        )
+
+      const nextRequest =
+        new Promise(
+          (resolve) => {
+
+            resolveRequest =
+              resolve
+
+          }
+        )
+
+      mockedGetFilteredProducts
+        .mockReturnValueOnce(
+          nextRequest as ReturnType<
+            typeof getFilteredProducts
+          >
+        )
+
+      renderProducts()
+
+      await waitForProductsToLoad()
+
+      const nextButton =
+        screen.getByRole(
+          "button",
+          {
+            name: "NEXT",
+          }
+        )
+
+      await user.click(
+        nextButton
+      )
+
+      expect(
+        await screen.findByText(
+          "Updating products..."
+        )
+      ).toBeInTheDocument()
+
+      resolveRequest!({
+        products: [
+          mockProduct,
+        ],
+
+        total: 24,
+
+        skip: 12,
+
+        limit: 12,
+      })
+
+      await waitFor(() => {
+
+        expect(
+          screen.queryByText(
+            "Updating products..."
+          )
+        ).not.toBeInTheDocument()
+
+      })
     }
   )
 
@@ -986,7 +1185,8 @@ describe("Products", () => {
 
       let resolveCategories:
         (
-          value: typeof mockCategories
+          value:
+            typeof mockCategories
         ) => void
 
       const categoriesRequest =

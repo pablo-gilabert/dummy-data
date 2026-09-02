@@ -30,12 +30,14 @@ import {
 
 import Swal from "sweetalert2"
 
+
 vi.mock(
   "../../CartContext/useCart",
   () => ({
     useCart: vi.fn(),
   })
 )
+
 
 vi.mock(
   "../../AuthContext/useAuth",
@@ -44,12 +46,14 @@ vi.mock(
   })
 )
 
+
 vi.mock(
   "../../services/orderStorage",
   () => ({
     saveOrder: vi.fn(),
   })
 )
+
 
 vi.mock(
   "sweetalert2",
@@ -59,6 +63,7 @@ vi.mock(
     },
   })
 )
+
 
 const mockedUseCart =
   vi.mocked(useCart)
@@ -74,6 +79,7 @@ const mockedSwalFire =
 
 const mockedNavigate =
   vi.fn()
+
 
 vi.mock(
   "react-router-dom",
@@ -97,6 +103,7 @@ vi.mock(
   }
 )
 
+
 const mockUser = {
   id: 1,
   username: "emilys",
@@ -109,6 +116,7 @@ const mockUser = {
   accessToken: "access-token",
   refreshToken: "refresh-token",
 }
+
 
 const mockProduct = {
   id: 1,
@@ -155,12 +163,14 @@ const mockProduct = {
   ],
 }
 
+
 const mockItems = [
   {
     product: mockProduct,
     quantity: 2,
   },
 ]
+
 
 const defaultCart = {
   items: mockItems,
@@ -170,6 +180,7 @@ const defaultCart = {
   clearCart: vi.fn(),
 }
 
+
 const defaultAuth = {
   user: mockUser,
   login: vi.fn(),
@@ -177,12 +188,14 @@ const defaultAuth = {
   isLoading: false,
 }
 
+
 const renderCheckout = () => {
 
   return render(
     <Checkout />
   )
 }
+
 
 describe("Checkout", () => {
 
@@ -204,6 +217,7 @@ describe("Checkout", () => {
       isDismissed: false,
     } as never)
   })
+
 
   it(
     "renders the checkout form",
@@ -256,6 +270,7 @@ describe("Checkout", () => {
     }
   )
 
+
   it(
     "renders the order summary",
     () => {
@@ -287,6 +302,7 @@ describe("Checkout", () => {
       ).toBeInTheDocument()
     }
   )
+
 
   it(
     "shows validation errors when the form is empty",
@@ -354,6 +370,7 @@ describe("Checkout", () => {
     }
   )
 
+
   it(
     "shows an error for an invalid email",
     async () => {
@@ -396,6 +413,7 @@ describe("Checkout", () => {
       ).not.toHaveBeenCalled()
     }
   )
+
 
   it(
     "clears the validation error when the user changes a field",
@@ -442,6 +460,7 @@ describe("Checkout", () => {
     }
   )
 
+
   it(
     "redirects to login when there is no authenticated user",
     async () => {
@@ -476,6 +495,7 @@ describe("Checkout", () => {
       )
     }
   )
+
 
   it(
     "shows insufficient stock warning",
@@ -547,6 +567,7 @@ describe("Checkout", () => {
     }
   )
 
+
   it(
     "does not place the order when confirmation is cancelled",
     async () => {
@@ -617,6 +638,7 @@ describe("Checkout", () => {
       )
     }
   )
+
 
   it(
     "places the order successfully",
@@ -729,6 +751,224 @@ describe("Checkout", () => {
     }
   )
 
+
+  it(
+    "trims customer information before saving the order",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      renderCheckout()
+
+      await user.clear(
+        screen.getByLabelText(
+          "Full name"
+        )
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Full name"
+        ),
+        "  John Doe  "
+      )
+
+      await user.clear(
+        screen.getByLabelText(
+          "Email"
+        )
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Email"
+        ),
+        "  john@example.com  "
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Phone"
+        ),
+        " 123456789 "
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Address"
+        ),
+        " Main Street 123 "
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "City"
+        ),
+        " Buenos Aires "
+      )
+
+      await user.click(
+        screen.getByRole(
+          "button",
+          {
+            name: "Place order",
+          }
+        )
+      )
+
+      await waitFor(() => {
+
+        expect(
+          mockedSaveOrder
+        ).toHaveBeenCalledTimes(1)
+
+      })
+
+      expect(
+        mockedSaveOrder
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          customer: {
+            name:
+              "John Doe",
+
+            email:
+              "john@example.com",
+
+            phone:
+              "123456789",
+
+            address:
+              "Main Street 123",
+
+            city:
+              "Buenos Aires",
+          },
+        })
+      )
+    }
+  )
+
+
+  it(
+    "prevents submitting another order while the current order is being processed",
+    async () => {
+
+      const user =
+        userEvent.setup()
+
+      let resolveSuccess:
+        (
+          value: unknown
+        ) => void
+
+      const successAlert =
+        new Promise(
+          (
+            resolve
+          ) => {
+            resolveSuccess =
+              resolve
+          }
+        )
+
+      mockedSwalFire
+        .mockResolvedValueOnce({
+          isConfirmed: true,
+          isDenied: false,
+          isDismissed: false,
+        } as never)
+
+      mockedSwalFire
+        .mockImplementationOnce(
+          () =>
+            successAlert as never
+        )
+
+      renderCheckout()
+
+      await user.type(
+        screen.getByLabelText(
+          "Phone"
+        ),
+        "123456789"
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Address"
+        ),
+        "Main Street 123"
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "City"
+        ),
+        "Buenos Aires"
+      )
+
+      const submitButton =
+        screen.getByRole(
+          "button",
+          {
+            name: "Place order",
+          }
+        )
+
+      await user.click(
+        submitButton
+      )
+
+      await waitFor(() => {
+
+        expect(
+          mockedSaveOrder
+        ).toHaveBeenCalledTimes(1)
+
+      })
+
+      expect(
+        submitButton
+      ).toBeDisabled()
+
+      expect(
+        submitButton
+      ).toHaveTextContent(
+        "Processing..."
+      )
+
+      await user.click(
+        submitButton
+      )
+
+      expect(
+        mockedSaveOrder
+      ).toHaveBeenCalledTimes(1)
+
+      resolveSuccess!({
+        isConfirmed: true,
+        isDenied: false,
+        isDismissed: false,
+      })
+
+      await waitFor(() => {
+
+        expect(
+          mockedNavigate
+        ).toHaveBeenCalledWith(
+          "/order-confirmation",
+          {
+            replace: true,
+          }
+        )
+
+      })
+    }
+  )
+
+
   it(
     "redirects to cart when the cart is empty",
     () => {
@@ -751,6 +991,7 @@ describe("Checkout", () => {
     }
   )
 
+
   it(
     "does not show checkout content when the cart is empty",
     () => {
@@ -772,6 +1013,7 @@ describe("Checkout", () => {
       ).not.toBeInTheDocument()
     }
   )
+
 
   it(
     "handles order storage errors",

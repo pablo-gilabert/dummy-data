@@ -574,6 +574,124 @@ describe(
     )
 
     it(
+      "clears the user when the stored session is removed during successful validation",
+      async () => {
+
+        let storedUser:
+          typeof mockUser | null =
+            mockUser
+
+        mockedGetStoredUser
+          .mockImplementation(
+            () => storedUser
+          )
+
+        mockedGetCurrentUser
+          .mockImplementation(
+            async () => {
+
+              storedUser = null
+
+              return {
+                ...mockUser,
+              }
+
+            }
+          )
+
+        renderAuthProvider()
+
+        expect(
+          screen.getByText(
+            "Emily"
+          )
+        ).toBeInTheDocument()
+
+        await waitFor(() => {
+
+          expect(
+            screen.getByText(
+              "No user"
+            )
+          ).toBeInTheDocument()
+
+        })
+
+        expect(
+          mockedGetCurrentUser
+        ).toHaveBeenCalledTimes(
+          1
+        )
+
+        expect(
+          mockedSetStoredUser
+        ).not.toHaveBeenCalled()
+
+      }
+    )
+
+    it(
+      "clears the user when the stored session is removed during failed validation",
+      async () => {
+
+        let storedUser:
+          typeof mockUser | null =
+            mockUser
+
+        mockedGetStoredUser
+          .mockImplementation(
+            () => storedUser
+          )
+
+        mockedGetCurrentUser
+          .mockImplementation(
+            async () => {
+
+              storedUser = null
+
+              throw new Error(
+                "Network error"
+              )
+
+            }
+          )
+
+        renderAuthProvider()
+
+        expect(
+          screen.getByText(
+            "Emily"
+          )
+        ).toBeInTheDocument()
+
+        await waitFor(() => {
+
+          expect(
+            screen.getByText(
+              "No user"
+            )
+          ).toBeInTheDocument()
+
+        })
+
+        expect(
+          mockedGetCurrentUser
+        ).toHaveBeenCalledTimes(
+          1
+        )
+
+        expect(
+          mockedSetStoredUser
+        ).not.toHaveBeenCalled()
+
+        expect(
+          mockedClearStoredUser
+        ).not.toHaveBeenCalled()
+
+      }
+    )
+
+    it(
       "logs in and stores the authenticated user",
       async () => {
 
@@ -648,6 +766,72 @@ describe(
         ).toHaveBeenCalledWith(
           mockUser
         )
+
+      }
+    )
+
+    it(
+      "does not authenticate the user when login fails",
+      async () => {
+
+        const user =
+          userEvent.setup()
+
+        mockedGetStoredUser
+          .mockReturnValue(
+            null
+          )
+
+        mockedLoginUser
+          .mockRejectedValue(
+            new Error(
+              "Invalid credentials"
+            )
+          )
+
+        renderAuthProvider()
+
+        await waitFor(() => {
+
+          expect(
+            screen.getByText(
+              "Ready"
+            )
+          ).toBeInTheDocument()
+
+        })
+
+        await user.click(
+
+          screen.getByRole(
+            "button",
+            {
+              name:
+                "Login",
+            }
+          )
+
+        )
+
+        await waitFor(() => {
+
+          expect(
+            mockedLoginUser
+          ).toHaveBeenCalledTimes(
+            1
+          )
+
+        })
+
+        expect(
+          screen.getByText(
+            "No user"
+          )
+        ).toBeInTheDocument()
+
+        expect(
+          mockedSetStoredUser
+        ).not.toHaveBeenCalled()
 
       }
     )

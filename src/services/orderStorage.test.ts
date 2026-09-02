@@ -130,4 +130,81 @@ describe("orderStorage", () => {
     ).toEqual([])
   })
 
+  it("returns an empty array when stored orders are not an array", () => {
+
+    localStorage.setItem(
+      "orders",
+      JSON.stringify({
+        invalid: true,
+      })
+    )
+
+    expect(
+      getOrders(1)
+    ).toEqual([])
+  })
+
+  it("starts with a new order when stored orders are invalid", () => {
+
+    localStorage.setItem(
+      "orders",
+      "{invalid json"
+    )
+
+    const order =
+      createOrder(
+        "order-1",
+        1
+      )
+
+    saveOrder(order)
+
+    expect(
+      getOrders(1)
+    ).toEqual([
+      order,
+    ])
+  })
+
+  it("saves a new order alongside existing orders", () => {
+
+    const firstOrder =
+      createOrder(
+        "order-1",
+        1
+      )
+
+    const secondOrder =
+      createOrder(
+        "order-2",
+        2
+      )
+
+    saveOrder(firstOrder)
+    saveOrder(secondOrder)
+
+    expect(
+      getOrders(1)
+    ).toEqual([
+      firstOrder,
+    ])
+
+    expect(
+      getOrders(2)
+    ).toEqual([
+      secondOrder,
+    ])
+
+    expect(
+      JSON.parse(
+        localStorage.getItem(
+          "orders"
+        ) ?? "[]"
+      )
+    ).toEqual([
+      firstOrder,
+      secondOrder,
+    ])
+  })
+
 })
