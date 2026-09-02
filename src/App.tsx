@@ -22,75 +22,42 @@ import Login from "./pages/Login/Login"
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"
 
 function App() {
-
   return (
-
     <>
-
       <Navbar />
 
       <Routes>
+        {/* Public storefront routes. */}
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/"
-          element={<Home />}
-        />
-
-        <Route
-          path="/products"
-          element={<Products />}
-        />
-
-        <Route
-          path="/products/:id"
-          element={<ProductDetail />}
-        />
-
-        <Route
-          path="/cart"
-          element={<Cart />}
-        />
-
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-
+        {/* Authenticated routes share one protection boundary. */}
         <Route element={<ProtectedRoute />}>
-
           <Route
             path="/checkout"
             element={<Checkout />}
           />
-
           <Route
             path="/order-confirmation"
-            element={
-              <OrderConfirmation />
-            }
+            element={<OrderConfirmation />}
           />
-
           <Route
             path="/orders"
             element={<Orders />}
           />
-
           <Route
             path="/orders/:orderId"
             element={<OrderDetail />}
           />
-
         </Route>
 
-        <Route
-          path="*"
-          element={<NotFound />}
-        />
-
+        {/* Unknown URLs are handled consistently by the NotFound page. */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
-
     </>
-
   )
 }
 

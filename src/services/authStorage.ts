@@ -4,52 +4,36 @@ import type {
 
 const USER_KEY = "user"
 
+// Authentication state is persisted locally so a page reload can restore
+// the current session before the provider validates it with the API.
 export const getStoredUser = (): User | null => {
-
-  const storedUser =
-    localStorage.getItem(USER_KEY)
+  const storedUser = localStorage.getItem(USER_KEY)
 
   if (!storedUser) {
     return null
   }
 
   try {
-
-    return JSON.parse(
-      storedUser
-    ) as User
-
+    return JSON.parse(storedUser) as User
   } catch {
-
-    localStorage.removeItem(
-      USER_KEY
-    )
-
+    // Invalid persisted data should never prevent the application from loading.
+    localStorage.removeItem(USER_KEY)
     return null
   }
 }
 
 export const getAccessToken = (): string | null => {
-
-  const user =
-    getStoredUser()
-
+  const user = getStoredUser()
   return user?.accessToken ?? null
 }
 
-export const setStoredUser = (
-  user: User
-): void => {
-
+export const setStoredUser = (user: User): void => {
   localStorage.setItem(
     USER_KEY,
-    JSON.stringify(user)
+    JSON.stringify(user),
   )
 }
 
 export const clearStoredUser = (): void => {
-
-  localStorage.removeItem(
-    USER_KEY
-  )
+  localStorage.removeItem(USER_KEY)
 }

@@ -1,24 +1,30 @@
-import js from '@eslint/js'
+import js from "@eslint/js"
 
-import globals from 'globals'
+import globals from "globals"
 
-import reactHooks from 'eslint-plugin-react-hooks'
+import reactHooks from "eslint-plugin-react-hooks"
 
-import reactRefresh from 'eslint-plugin-react-refresh'
+import reactRefresh from "eslint-plugin-react-refresh"
 
-import tseslint from 'typescript-eslint'
+import tseslint from "typescript-eslint"
 
-import { defineConfig, globalIgnores } from 'eslint/config'
+import {
+  defineConfig,
+  globalIgnores,
+} from "eslint/config"
 
 export default defineConfig([
 
+  // Generated build and coverage artifacts are not application source code.
   globalIgnores([
-    'dist',
-    'coverage',
+    "dist",
+    "coverage",
+    "playwright-report",
+    "test-results",
   ]),
 
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ["**/*.{ts,tsx}"],
 
     extends: [
       js.configs.recommended,
@@ -31,5 +37,4 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
-
 ])

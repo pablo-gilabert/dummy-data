@@ -8,13 +8,12 @@ import {
 } from "../../AuthContext/useAuth"
 
 const PublicRoute = () => {
-
   const {
     user,
   } = useAuth()
 
+  // Authenticated users should not return to the login screen.
   if (user) {
-
     return (
       <Navigate
         to="/products"

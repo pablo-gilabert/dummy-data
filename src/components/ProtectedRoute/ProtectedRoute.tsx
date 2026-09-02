@@ -8,19 +8,17 @@ import {
 } from "../../AuthContext/useAuth"
 
 const ProtectedRoute = () => {
-
   const {
     user,
     isLoading,
   } = useAuth()
 
+  // Authentication initialization must finish before deciding whether to redirect.
   if (isLoading) {
-
     return null
   }
 
   if (!user) {
-
     return (
       <Navigate
         to="/login"
@@ -29,6 +27,7 @@ const ProtectedRoute = () => {
     )
   }
 
+  // Outlet renders whichever authenticated child route matched the URL.
   return <Outlet />
 }
 

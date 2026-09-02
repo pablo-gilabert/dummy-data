@@ -6,15 +6,10 @@ import {
   productQueries,
 } from "../queries/products"
 
-
-export const useProduct = (
-  productId: number
-) => {
-
+// Product detail uses the same centralized query definition as card prefetching,
+// keeping cache identity and request behavior consistent across the application.
+export const useProduct = (productId: number) => {
   return useQuery(
-    productQueries.detail(
-      productId
-    )
+    productQueries.detail(productId),
   )
-
 }

@@ -10,22 +10,16 @@ import {
   productQueries,
 } from "../queries/products"
 
-
 interface UseProductsParams {
-
   search: string
-
   category: string
-
   sort: ProductSort
-
   page: number
-
   limit: number
-
 }
 
-
+// Exposes product list and category server state to the page without coupling
+// the page to TanStack Query's query-key and query-function details.
 export const useProducts = ({
   search,
   category,
@@ -33,31 +27,22 @@ export const useProducts = ({
   page,
   limit,
 }: UseProductsParams) => {
+  const productsQuery = useQuery(
+    productQueries.list(
+      search,
+      category,
+      sort,
+      page,
+      limit,
+    ),
+  )
 
-  const productsQuery =
-    useQuery(
-      productQueries.list(
-        search,
-        category,
-        sort,
-        page,
-        limit
-      )
-    )
-
-
-  const categoriesQuery =
-    useQuery(
-      productQueries.categories()
-    )
-
+  const categoriesQuery = useQuery(
+    productQueries.categories(),
+  )
 
   return {
-
     productsQuery,
-
     categoriesQuery,
-
   }
-
 }

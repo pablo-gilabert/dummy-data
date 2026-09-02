@@ -32,6 +32,8 @@ import {
 
 import "./index.css"
 
+// The provider order is intentional: routing and server-state services
+// are available to both authentication and cart state throughout the app.
 createRoot(
   document.getElementById("root")!
 ).render(
@@ -54,6 +56,7 @@ createRoot(
 
         </AuthProvider>
 
+        {/* Devtools are useful locally without changing application behavior. */}
         <ReactQueryDevtools
           initialIsOpen={false}
         />
