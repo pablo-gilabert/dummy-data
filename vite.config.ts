@@ -19,6 +19,12 @@ export default defineConfig({
     setupFiles:
       "./src/test/setup.ts",
 
+    exclude: [
+      "node_modules/**",
+      "dist/**",
+      "e2e/**",
+    ],
+
     coverage: {
 
       provider: "v8",
@@ -31,6 +37,7 @@ export default defineConfig({
       exclude: [
         "src/test/**",
         "**/*.d.ts",
+        "e2e/**",
       ],
     },
   },

@@ -517,7 +517,7 @@ describe(
     )
 
     it(
-      "clears the session when the current user cannot be validated",
+      "preserves the session when the current user cannot be validated",
       async () => {
 
         mockedGetStoredUser
@@ -528,7 +528,7 @@ describe(
         mockedGetCurrentUser
           .mockRejectedValue(
             new Error(
-              "Session expired"
+              "Network error"
             )
           )
 
@@ -546,9 +546,15 @@ describe(
 
         expect(
           screen.getByText(
-            "No user"
+            "Emily"
           )
         ).toBeInTheDocument()
+
+        expect(
+          screen.queryByText(
+            "No user"
+          )
+        ).not.toBeInTheDocument()
 
         expect(
           mockedGetCurrentUser
@@ -558,9 +564,7 @@ describe(
 
         expect(
           mockedClearStoredUser
-        ).toHaveBeenCalledTimes(
-          1
-        )
+        ).not.toHaveBeenCalled()
 
         expect(
           mockedSetStoredUser

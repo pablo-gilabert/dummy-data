@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
 } from "react"
 
@@ -30,22 +31,18 @@ import {
   AuthContext,
 } from "./authContext"
 
-
 interface AuthProviderProps {
   children: ReactNode
 }
-
 
 interface LoginCredentials {
   username: string
   password: string
 }
 
-
 const AuthProvider = ({
   children,
 }: AuthProviderProps) => {
-
   const [
     user,
     setUser,
@@ -53,16 +50,18 @@ const AuthProvider = ({
     getStoredUser()
   )
 
-
   const [
-    isLoading,
-    setIsLoading,
-  ] = useState(true)
+    isInitializing,
+    setIsInitializing,
+  ] = useState(
+    () => getStoredUser() !== null
+  )
 
+  const hasLoggedInRef =
+    useRef(false)
 
   const loginMutation =
     useMutation({
-
       mutationFn: ({
         username,
         password,
@@ -75,6 +74,7 @@ const AuthProvider = ({
       onSuccess: (
         authenticatedUser
       ) => {
+        hasLoggedInRef.current = true
 
         setStoredUser(
           authenticatedUser
@@ -83,52 +83,51 @@ const AuthProvider = ({
         setUser(
           authenticatedUser
         )
-      },
 
+        setIsInitializing(false)
+      },
     })
 
-
   useEffect(() => {
+    let isActive = true
 
     const validateSession =
       async () => {
+        if (hasLoggedInRef.current) {
+          return
+        }
 
         const storedUser =
           getStoredUser()
 
-
         if (!storedUser) {
-
-          setIsLoading(false)
-
           return
         }
 
-
         try {
-
           const currentUser =
             await getCurrentUser()
 
+          if (!isActive) {
+            return
+          }
 
           const latestStoredUser =
             getStoredUser()
 
+          if (!latestStoredUser) {
+            setUser(null)
+            return
+          }
 
           const authenticatedUser:
             User = {
-
-            ...currentUser,
-
-            accessToken:
-              latestStoredUser?.accessToken ??
-              storedUser.accessToken,
-
-            refreshToken:
-              latestStoredUser?.refreshToken ??
-              storedUser.refreshToken,
-          }
-
+              ...currentUser,
+              accessToken:
+                latestStoredUser.accessToken,
+              refreshToken:
+                latestStoredUser.refreshToken,
+            }
 
           setStoredUser(
             authenticatedUser
@@ -137,68 +136,70 @@ const AuthProvider = ({
           setUser(
             authenticatedUser
           )
-
         } catch {
+          if (!isActive) {
+            return
+          }
 
-          clearStoredUser()
+          /*
+           * Do not log the user out because of a
+           * network error, aborted request, or reload.
+           *
+           * If the stored session still exists, keep
+           * the current authenticated state.
+           */
+          const latestStoredUser =
+            getStoredUser()
 
-          setUser(null)
-
+          if (!latestStoredUser) {
+            setUser(null)
+          }
         } finally {
-
-          setIsLoading(false)
-
+          if (isActive) {
+            setIsInitializing(false)
+          }
         }
       }
 
-
     void validateSession()
 
+    return () => {
+      isActive = false
+    }
   }, [])
-
 
   const login = async (
     username: string,
     password: string
   ) => {
-
     await loginMutation.mutateAsync({
-
       username,
       password,
-
     })
   }
 
-
   const logout = () => {
-
     clearStoredUser()
 
     setUser(null)
 
-    loginMutation.reset()
+    hasLoggedInRef.current = false
 
+    loginMutation.reset()
   }
 
-
   return (
-
     <AuthContext.Provider
       value={{
         user,
-        isLoading,
+        isLoading: isInitializing,
         login,
         logout,
       }}
     >
-
       {children}
-
     </AuthContext.Provider>
-
   )
 }
-
 
 export default AuthProvider

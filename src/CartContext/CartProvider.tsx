@@ -5,9 +5,7 @@ import {
   type ReactNode,
 } from "react"
 
-import type {
-  Product,
-} from "../types/Product"
+import type { Product } from "../types/Product"
 
 import {
   cartReducer,
@@ -26,24 +24,29 @@ import {
   useAuth,
 } from "../AuthContext/useAuth"
 
+
 interface CartProviderProps {
   children: ReactNode
 }
 
+
 const CART_STORAGE_KEY = "cart"
 
+
 const getCartStorageKey = (
-  userId: number
+  userId: number,
 ) => {
   return `${CART_STORAGE_KEY}_${userId}`
 }
 
+
 const getStoredCartItems = (
-  userId: number
+  userId: number,
 ) => {
+
   const storedCart =
     localStorage.getItem(
-      getCartStorageKey(userId)
+      getCartStorageKey(userId),
     )
 
   if (!storedCart) {
@@ -51,66 +54,61 @@ const getStoredCartItems = (
   }
 
   try {
+
     const parsedCart =
       JSON.parse(storedCart)
 
     if (
       !parsedCart ||
       !Array.isArray(
-        parsedCart.items
+        parsedCart.items,
       )
     ) {
       return []
     }
 
     return parsedCart.items
+
   } catch {
+
     return []
   }
 }
 
+
 export const CartProvider = ({
   children,
 }: CartProviderProps) => {
+
   const {
     user,
     isLoading,
   } = useAuth()
+
 
   const [
     state,
     dispatch,
   ] = useReducer(
     cartReducer,
-    initialCartState
+    initialCartState,
   )
+
 
   const previousUserId =
     useRef<number | null>(null)
 
-  /*
-   * Indicates whether the current state
-   * was changed by the user.
-   *
-   * LOAD_CART does not count as a change.
-   */
-  const cartWasModified =
-    useRef(false)
-
-  /*
-   * Keeps track of which user's cart is
-   * currently represented by `state`.
-   */
-  const stateUserId =
-    useRef<number | null>(null)
 
   useEffect(() => {
+
     if (isLoading) {
       return
     }
 
+
     const currentUserId =
       user?.id ?? null
+
 
     if (
       previousUserId.current ===
@@ -119,23 +117,13 @@ export const CartProvider = ({
       return
     }
 
+
     previousUserId.current =
       currentUserId
 
-    /*
-     * The current state belongs to the
-     * previous user.
-     */
-    stateUserId.current =
-      null
-
-    /*
-     * Loading a cart is NOT a modification.
-     */
-    cartWasModified.current =
-      false
 
     if (!user) {
+
       dispatch({
         type:
           CartActionType.LOAD_CART,
@@ -145,176 +133,190 @@ export const CartProvider = ({
       return
     }
 
+
     const storedItems =
-      getStoredCartItems(
-        user.id
-      )
+      getStoredCartItems(user.id)
+
 
     dispatch({
       type:
         CartActionType.LOAD_CART,
       payload: storedItems,
     })
+
   }, [
     user,
     isLoading,
   ])
 
-  /*
-   * After the LOAD_CART render has completed,
-   * associate the state with the current user.
-   */
-  useEffect(() => {
-    if (isLoading) {
-      return
-    }
 
-    const currentUserId =
-      user?.id ?? null
-
-    if (
-      previousUserId.current !==
-      currentUserId
-    ) {
-      return
-    }
-
-    /*
-     * Only establish ownership after
-     * the cart for this user has rendered.
-     */
-    if (
-      stateUserId.current !==
-      currentUserId
-    ) {
-      stateUserId.current =
-        currentUserId
-    }
-  }, [
-    state,
-    user,
-    isLoading,
-  ])
-
-  const addItem = (
-    product: Product
+  const persistCart = (
+    items: typeof state.items,
   ) => {
-    cartWasModified.current =
-      true
 
-    dispatch({
-      type:
-        CartActionType.ADD_ITEM,
-      payload: product,
-    })
-  }
-
-  const removeItem = (
-    productId: number
-  ) => {
-    cartWasModified.current =
-      true
-
-    dispatch({
-      type:
-        CartActionType.REMOVE_ITEM,
-      payload: productId,
-    })
-  }
-
-  const clearItem = (
-    productId: number
-  ) => {
-    cartWasModified.current =
-      true
-
-    dispatch({
-      type:
-        CartActionType.CLEAR_ITEM,
-      payload: productId,
-    })
-  }
-
-  const clearCart = () => {
-    cartWasModified.current =
-      true
-
-    dispatch({
-      type:
-        CartActionType.CLEAR_CART,
-    })
-  }
-
-  useEffect(() => {
-    if (
-      isLoading ||
-      !user
-    ) {
+    if (!user) {
       return
     }
 
-    /*
-     * Never persist a cart just because
-     * LOAD_CART changed the state.
-     */
-    if (
-      !cartWasModified.current
-    ) {
-      return
-    }
-
-    /*
-     * Never save a cart under the wrong
-     * user's key.
-     */
-    if (
-      stateUserId.current !==
-      user.id
-    ) {
-      return
-    }
 
     const storageKey =
       getCartStorageKey(user.id)
 
-    /*
-     * An empty cart does not need to be
-     * persisted. Remove the user's key
-     * instead of storing {"items":[]}.
-     */
-    if (state.items.length === 0) {
+
+    if (items.length === 0) {
+
       localStorage.removeItem(
-        storageKey
+        storageKey,
       )
 
       return
     }
 
+
     localStorage.setItem(
       storageKey,
-      JSON.stringify(state)
+      JSON.stringify({
+        items,
+      }),
     )
-  }, [
-    state,
-    user,
-    isLoading,
-  ])
+  }
+
+
+  const addItem = (
+    product: Product,
+  ) => {
+
+    const action = {
+      type:
+        CartActionType.ADD_ITEM,
+      payload: product,
+    } as const
+
+
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
+
+    dispatch(action)
+
+
+    if (
+      nextState !== state
+    ) {
+      persistCart(
+        nextState.items,
+      )
+    }
+  }
+
+
+  const removeItem = (
+    productId: number,
+  ) => {
+
+    const action = {
+      type:
+        CartActionType.REMOVE_ITEM,
+      payload: productId,
+    } as const
+
+
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
+
+    dispatch(action)
+
+
+    if (
+      nextState !== state
+    ) {
+      persistCart(
+        nextState.items,
+      )
+    }
+  }
+
+
+  const clearItem = (
+    productId: number,
+  ) => {
+
+    const action = {
+      type:
+        CartActionType.CLEAR_ITEM,
+      payload: productId,
+    } as const
+
+
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
+
+    dispatch(action)
+
+
+    if (
+      nextState !== state
+    ) {
+      persistCart(
+        nextState.items,
+      )
+    }
+  }
+
+
+  const clearCart = () => {
+
+    const action = {
+      type:
+        CartActionType.CLEAR_CART,
+    } as const
+
+
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
+
+    dispatch(action)
+
+
+    if (
+      nextState !== state
+    ) {
+      persistCart(
+        nextState.items,
+      )
+    }
+  }
+
 
   return (
+
     <CartContext.Provider
       value={{
         items: state.items,
-
         addItem,
-
         removeItem,
-
         clearItem,
-
         clearCart,
       }}
     >
+
       {children}
+
     </CartContext.Provider>
   )
 }

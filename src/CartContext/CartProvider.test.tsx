@@ -37,6 +37,7 @@ import {
   useCart,
 } from "./useCart"
 
+
 const product: Product = {
   id: 1,
 
@@ -111,6 +112,7 @@ const product: Product = {
     "https://example.com/thumbnail.jpg",
 }
 
+
 const secondProduct: Product = {
   ...product,
 
@@ -122,6 +124,7 @@ const secondProduct: Product = {
   sku:
     "TEST-002",
 }
+
 
 const createUser = (
   id: number
@@ -153,9 +156,11 @@ const createUser = (
     `refresh-token-${id}`,
 })
 
+
 interface TestCartProps {
   children?: ReactNode
 }
+
 
 const TestCart = ({
   children,
@@ -234,10 +239,12 @@ const TestCart = ({
   )
 }
 
+
 interface TestProviderProps {
   user: User | null
   isLoading?: boolean
 }
+
 
 const TestProvider = ({
   user,
@@ -267,6 +274,7 @@ const TestProvider = ({
   )
 }
 
+
 describe(
   "CartProvider",
   () => {
@@ -276,6 +284,7 @@ describe(
       localStorage.clear()
 
     })
+
 
     it(
       "starts with an empty cart for a user without stored items",
@@ -298,6 +307,7 @@ describe(
 
       }
     )
+
 
     it(
       "adds a product to the current user's cart",
@@ -337,6 +347,7 @@ describe(
 
       }
     )
+
 
     it(
       "persists the cart using the user's id",
@@ -384,6 +395,7 @@ describe(
       }
     )
 
+
     it(
       "loads the existing cart for the current user",
       async () => {
@@ -427,6 +439,7 @@ describe(
       }
     )
 
+
     it(
       "does not load another user's cart",
       async () => {
@@ -460,6 +473,7 @@ describe(
       }
     )
 
+
     it(
       "handles invalid JSON stored in localStorage",
       async () => {
@@ -485,6 +499,7 @@ describe(
 
       }
     )
+
 
     it(
       "handles invalid cart data stored in localStorage",
@@ -515,6 +530,7 @@ describe(
       }
     )
 
+
     it(
       "handles null cart data stored in localStorage",
       async () => {
@@ -540,6 +556,7 @@ describe(
 
       }
     )
+
 
     it(
       "does not initialize the cart while authentication is loading",
@@ -598,8 +615,9 @@ describe(
       }
     )
 
+
     it(
-      "does not persist the cart while authentication is loading",
+      "persists the cart when a user exists even while authentication is loading",
       async () => {
 
         const user =
@@ -627,10 +645,19 @@ describe(
           localStorage.getItem(
             "cart_1"
           )
-        ).toBeNull()
+        ).not.toBeNull()
+
+        expect(
+          JSON.parse(
+            localStorage.getItem(
+              "cart_1"
+            ) ?? "{}"
+          ).items
+        ).toHaveLength(1)
 
       }
     )
+
 
     it(
       "clears the cart when there is no authenticated user",
@@ -664,6 +691,7 @@ describe(
 
       }
     )
+
 
     it(
       "loads the new user's cart when the authenticated user changes",
@@ -728,6 +756,7 @@ describe(
       }
     )
 
+
     it(
       "does not reload the cart when the same user is rendered again",
       async () => {
@@ -789,6 +818,7 @@ describe(
       }
     )
 
+
     it(
       "removes one quantity when remove is clicked",
       async () => {
@@ -846,6 +876,7 @@ describe(
       }
     )
 
+
     it(
       "removes the item completely when clear item is clicked",
       async () => {
@@ -893,6 +924,7 @@ describe(
 
       }
     )
+
 
     it(
       "clears the current user's cart",
@@ -951,6 +983,7 @@ describe(
       }
     )
 
+
     it(
       "removes the user's cart from localStorage when the cart is cleared",
       async () => {
@@ -1006,6 +1039,7 @@ describe(
 
       }
     )
+
 
     it(
       "keeps separate carts for different users",
@@ -1065,6 +1099,7 @@ describe(
 
       }
     )
+
 
     it(
       "does not overwrite the previous user's cart when switching users",
@@ -1141,6 +1176,7 @@ describe(
       }
     )
 
+
     it(
       "does not persist an empty cart loaded from localStorage",
       async () => {
@@ -1178,6 +1214,7 @@ describe(
 
       }
     )
+
 
     it(
       "keeps the current user's cart after adding a second product",
