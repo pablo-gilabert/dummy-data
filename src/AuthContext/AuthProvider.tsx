@@ -43,123 +43,92 @@ interface LoginCredentials {
 const AuthProvider = ({
   children,
 }: AuthProviderProps) => {
-  const [
-    user,
-    setUser,
-  ] = useState<User | null>(() =>
+  const [user, setUser] = useState<User | null>(() =>
     getStoredUser()
   )
 
-  const [
-    isInitializing,
-    setIsInitializing,
-  ] = useState(
+  // A stored user is considered "initializing" until the session has been
+  // checked. This prevents protected routes from redirecting too early.
+  const [isInitializing, setIsInitializing] = useState(
     () => getStoredUser() !== null
   )
 
-  const hasLoggedInRef =
-    useRef(false)
+  // Prevents the startup session validation from racing with a login that
+  // completed while the provider was mounting.
+  const hasLoggedInRef = useRef(false)
 
-  const loginMutation =
-    useMutation({
-      mutationFn: ({
-        username,
-        password,
-      }: LoginCredentials) =>
-        loginUser(
-          username,
-          password
-        ),
+  const loginMutation = useMutation({
+    mutationFn: ({
+      username,
+      password,
+    }: LoginCredentials) =>
+      loginUser(username, password),
 
-      onSuccess: (
-        authenticatedUser
-      ) => {
-        hasLoggedInRef.current = true
-
-        setStoredUser(
-          authenticatedUser
-        )
-
-        setUser(
-          authenticatedUser
-        )
-
-        setIsInitializing(false)
-      },
-    })
+    onSuccess: (authenticatedUser) => {
+      hasLoggedInRef.current = true
+      setStoredUser(authenticatedUser)
+      setUser(authenticatedUser)
+      setIsInitializing(false)
+    },
+  })
 
   useEffect(() => {
     let isActive = true
 
-    const validateSession =
-      async () => {
-        if (hasLoggedInRef.current) {
+    const validateSession = async () => {
+      if (hasLoggedInRef.current) {
+        return
+      }
+
+      const storedUser = getStoredUser()
+
+      if (!storedUser) {
+        return
+      }
+
+      try {
+        // Validate the server session while preserving the locally stored
+        // tokens, because the /me response does not need to replace them.
+        const currentUser = await getCurrentUser()
+
+        if (!isActive) {
           return
         }
 
-        const storedUser =
-          getStoredUser()
+        const latestStoredUser = getStoredUser()
 
-        if (!storedUser) {
+        if (!latestStoredUser) {
+          setUser(null)
           return
         }
 
-        try {
-          const currentUser =
-            await getCurrentUser()
+        const authenticatedUser: User = {
+          ...currentUser,
+          accessToken: latestStoredUser.accessToken,
+          refreshToken: latestStoredUser.refreshToken,
+        }
 
-          if (!isActive) {
-            return
-          }
+        setStoredUser(authenticatedUser)
+        setUser(authenticatedUser)
+      } catch {
+        if (!isActive) {
+          return
+        }
 
-          const latestStoredUser =
-            getStoredUser()
+        // A transient network failure should not destroy a valid local
+        // session. The authenticated state is cleared only when the stored
+        // session itself has disappeared.
+        const latestStoredUser = getStoredUser()
 
-          if (!latestStoredUser) {
-            setUser(null)
-            return
-          }
-
-          const authenticatedUser:
-            User = {
-              ...currentUser,
-              accessToken:
-                latestStoredUser.accessToken,
-              refreshToken:
-                latestStoredUser.refreshToken,
-            }
-
-          setStoredUser(
-            authenticatedUser
-          )
-
-          setUser(
-            authenticatedUser
-          )
-        } catch {
-          if (!isActive) {
-            return
-          }
-
-          /*
-           * Do not log the user out because of a
-           * network error, aborted request, or reload.
-           *
-           * If the stored session still exists, keep
-           * the current authenticated state.
-           */
-          const latestStoredUser =
-            getStoredUser()
-
-          if (!latestStoredUser) {
-            setUser(null)
-          }
-        } finally {
-          if (isActive) {
-            setIsInitializing(false)
-          }
+        if (!latestStoredUser) {
+          setUser(null)
+        }
+      } finally {
+        if (isActive) {
+          setIsInitializing(false)
         }
       }
+    }
 
     void validateSession()
 
@@ -170,7 +139,7 @@ const AuthProvider = ({
 
   const login = async (
     username: string,
-    password: string
+    password: string,
   ) => {
     await loginMutation.mutateAsync({
       username,
@@ -180,11 +149,8 @@ const AuthProvider = ({
 
   const logout = () => {
     clearStoredUser()
-
     setUser(null)
-
     hasLoggedInRef.current = false
-
     loginMutation.reset()
   }
 

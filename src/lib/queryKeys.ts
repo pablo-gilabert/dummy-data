@@ -2,20 +2,17 @@ import type {
   ProductSort,
 } from "../services/products"
 
-
+// Query keys are centralized so related data always shares the same
+// cache identity across hooks, pages, and prefetching.
 export const queryKeys = {
-
   products: {
-
-    all: [
-      "products",
-    ] as const,
+    all: ["products"] as const,
 
     list: (
       search: string,
       category: string,
       sort: ProductSort,
-      page: number
+      page: number,
     ) => [
       "products",
       "list",
@@ -25,9 +22,7 @@ export const queryKeys = {
       page,
     ] as const,
 
-    detail: (
-      id: number
-    ) => [
+    detail: (id: number) => [
       "products",
       "detail",
       id,
@@ -37,7 +32,5 @@ export const queryKeys = {
       "products",
       "categories",
     ] as const,
-
   },
-
 }
