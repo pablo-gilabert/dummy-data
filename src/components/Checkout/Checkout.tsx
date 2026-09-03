@@ -1,12 +1,14 @@
 import {
   useEffect,
-  useState,
 } from "react"
 
-import type {
-  ChangeEvent,
-  FormEvent,
-} from "react"
+import {
+  useForm,
+} from "react-hook-form"
+
+import {
+  zodResolver,
+} from "@hookform/resolvers/zod"
 
 import {
   useNavigate,
@@ -22,6 +24,11 @@ import {
   useAuth,
 } from "../../AuthContext/useAuth"
 
+import {
+  CheckoutSchema,
+  type CheckoutFormData,
+} from "../../schemas/CheckoutSchema"
+
 import type {
   Order,
 } from "../../types/Order"
@@ -32,21 +39,6 @@ import {
 
 import styles from "./Checkout.module.css"
 
-interface CheckoutForm {
-  name: string
-  email: string
-  phone: string
-  address: string
-  city: string
-}
-
-interface CheckoutErrors {
-  name?: string
-  email?: string
-  phone?: string
-  address?: string
-  city?: string
-}
 
 const Checkout = () => {
 
@@ -62,31 +54,30 @@ const Checkout = () => {
   const navigate =
     useNavigate()
 
-  const [
-    form,
-    setForm,
-  ] = useState<CheckoutForm>(() => ({
-    name: user
-      ? `${user.firstName} ${user.lastName}`
-      : "",
+  const {
+    register,
+    handleSubmit,
+    formState: {
+      errors,
+      isSubmitting,
+    },
+  } = useForm<CheckoutFormData>({
+    resolver:
+      zodResolver(CheckoutSchema),
 
-    email:
-      user?.email ?? "",
+    defaultValues: {
+      name: user
+        ? `${user.firstName} ${user.lastName}`
+        : "",
 
-    phone: "",
-    address: "",
-    city: "",
-  }))
+      email:
+        user?.email ?? "",
 
-  const [
-    errors,
-    setErrors,
-  ] = useState<CheckoutErrors>({})
-
-  const [
-    isSubmitting,
-    setIsSubmitting,
-  ] = useState(false)
+      phone: "",
+      address: "",
+      city: "",
+    },
+  })
 
   useEffect(() => {
 
@@ -96,7 +87,7 @@ const Checkout = () => {
         "/cart",
         {
           replace: true,
-        }
+        },
       )
     }
 
@@ -114,87 +105,13 @@ const Checkout = () => {
     items.reduce<number>(
       (
         sum,
-        item
+        item,
       ) =>
         sum +
         item.product.price *
         item.quantity,
-      0
+      0,
     )
-
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-
-    const {
-      name,
-      value,
-    } = event.target
-
-    setForm((previous) => ({
-      ...previous,
-      [name]: value,
-    }))
-
-    setErrors((previous) => ({
-      ...previous,
-      [name]: undefined,
-    }))
-  }
-
-  const validateForm = (): boolean => {
-
-    const newErrors: CheckoutErrors = {}
-
-    if (!form.name.trim()) {
-
-      newErrors.name =
-        "Please enter your full name."
-    }
-
-    if (!form.email.trim()) {
-
-      newErrors.email =
-        "Please enter your email."
-
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-        form.email
-      )
-    ) {
-
-      newErrors.email =
-        "Please enter a valid email."
-    }
-
-    if (!form.phone.trim()) {
-
-      newErrors.phone =
-        "Please enter your phone number."
-    }
-
-    if (!form.address.trim()) {
-
-      newErrors.address =
-        "Please enter your address."
-    }
-
-    if (!form.city.trim()) {
-
-      newErrors.city =
-        "Please enter your city."
-    }
-
-    setErrors(
-      newErrors
-    )
-
-    return (
-      Object.keys(
-        newErrors
-      ).length === 0
-    )
-  }
 
   const validateStock = (): boolean => {
 
@@ -202,7 +119,7 @@ const Checkout = () => {
       items.find(
         (item) =>
           item.quantity >
-          item.product.stock
+          item.product.stock,
       )
 
     if (!invalidItem) {
@@ -233,16 +150,9 @@ const Checkout = () => {
     return false
   }
 
-  const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
+  const onSubmit = async (
+    data: CheckoutFormData,
   ) => {
-
-    event.preventDefault()
-
-    if (isSubmitting) {
-
-      return
-    }
 
     if (!user) {
 
@@ -250,13 +160,8 @@ const Checkout = () => {
         "/login",
         {
           replace: true,
-        }
+        },
       )
-
-      return
-    }
-
-    if (!validateForm()) {
 
       return
     }
@@ -302,8 +207,6 @@ const Checkout = () => {
       return
     }
 
-    setIsSubmitting(true)
-
     try {
 
       const order: Order = {
@@ -320,19 +223,19 @@ const Checkout = () => {
         customer: {
 
           name:
-            form.name.trim(),
+            data.name,
 
           email:
-            form.email.trim(),
+            data.email,
 
           phone:
-            form.phone.trim(),
+            data.phone,
 
           address:
-            form.address.trim(),
+            data.address,
 
           city:
-            form.city.trim(),
+            data.city,
         },
 
         items: [
@@ -344,12 +247,12 @@ const Checkout = () => {
       }
 
       saveOrder(
-        order
+        order,
       )
 
       localStorage.setItem(
         "lastOrderId",
-        order.id
+        order.id,
       )
 
       clearCart()
@@ -376,12 +279,10 @@ const Checkout = () => {
         "/order-confirmation",
         {
           replace: true,
-        }
+        },
       )
 
     } catch {
-
-      setIsSubmitting(false)
 
       await Swal.fire({
 
@@ -431,7 +332,9 @@ const Checkout = () => {
 
           <form
             onSubmit={
-              handleSubmit
+              handleSubmit(
+                onSubmit,
+              )
             }
             noValidate
           >
@@ -446,16 +349,14 @@ const Checkout = () => {
 
               <input
                 id="name"
-                name="name"
                 type="text"
+                {...register(
+                  "name",
+                )}
                 autoComplete="name"
-                value={form.name}
-                onChange={
-                  handleChange
-                }
                 aria-invalid={
                   Boolean(
-                    errors.name
+                    errors.name,
                   )
                 }
                 aria-describedby={
@@ -476,7 +377,9 @@ const Checkout = () => {
                     styles.error
                   }
                 >
-                  {errors.name}
+                  {
+                    errors.name.message
+                  }
                 </span>
 
               )}
@@ -493,16 +396,14 @@ const Checkout = () => {
 
               <input
                 id="email"
-                name="email"
                 type="email"
+                {...register(
+                  "email",
+                )}
                 autoComplete="email"
-                value={form.email}
-                onChange={
-                  handleChange
-                }
                 aria-invalid={
                   Boolean(
-                    errors.email
+                    errors.email,
                   )
                 }
                 aria-describedby={
@@ -523,7 +424,9 @@ const Checkout = () => {
                     styles.error
                   }
                 >
-                  {errors.email}
+                  {
+                    errors.email.message
+                  }
                 </span>
 
               )}
@@ -540,16 +443,14 @@ const Checkout = () => {
 
               <input
                 id="phone"
-                name="phone"
                 type="tel"
+                {...register(
+                  "phone",
+                )}
                 autoComplete="tel"
-                value={form.phone}
-                onChange={
-                  handleChange
-                }
                 aria-invalid={
                   Boolean(
-                    errors.phone
+                    errors.phone,
                   )
                 }
                 aria-describedby={
@@ -570,7 +471,9 @@ const Checkout = () => {
                     styles.error
                   }
                 >
-                  {errors.phone}
+                  {
+                    errors.phone.message
+                  }
                 </span>
 
               )}
@@ -587,16 +490,14 @@ const Checkout = () => {
 
               <input
                 id="address"
-                name="address"
                 type="text"
+                {...register(
+                  "address",
+                )}
                 autoComplete="street-address"
-                value={form.address}
-                onChange={
-                  handleChange
-                }
                 aria-invalid={
                   Boolean(
-                    errors.address
+                    errors.address,
                   )
                 }
                 aria-describedby={
@@ -617,7 +518,9 @@ const Checkout = () => {
                     styles.error
                   }
                 >
-                  {errors.address}
+                  {
+                    errors.address.message
+                  }
                 </span>
 
               )}
@@ -634,16 +537,14 @@ const Checkout = () => {
 
               <input
                 id="city"
-                name="city"
                 type="text"
+                {...register(
+                  "city",
+                )}
                 autoComplete="address-level2"
-                value={form.city}
-                onChange={
-                  handleChange
-                }
                 aria-invalid={
                   Boolean(
-                    errors.city
+                    errors.city,
                   )
                 }
                 aria-describedby={
@@ -664,7 +565,9 @@ const Checkout = () => {
                     styles.error
                   }
                 >
-                  {errors.city}
+                  {
+                    errors.city.message
+                  }
                 </span>
 
               )}

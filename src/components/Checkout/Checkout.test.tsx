@@ -476,6 +476,41 @@ describe("Checkout", () => {
 
       renderCheckout()
 
+      await user.type(
+        screen.getByLabelText(
+          "Full name"
+        ),
+        "John Doe"
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Email"
+        ),
+        "john@example.com"
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Phone"
+        ),
+        "123456789"
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "Address"
+        ),
+        "Main Street 123"
+      )
+
+      await user.type(
+        screen.getByLabelText(
+          "City"
+        ),
+        "Buenos Aires"
+      )
+
       await user.click(
         screen.getByRole(
           "button",
