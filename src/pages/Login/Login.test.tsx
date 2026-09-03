@@ -139,12 +139,10 @@ describe("Login", () => {
       )
 
       expect(
-        screen.getByRole(
-          "alert"
+        screen.getByText(
+          "Username is required."
         )
-      ).toHaveTextContent(
-        "Username is required."
-      )
+      ).toBeInTheDocument()
 
       expect(
         mockLogin
@@ -186,12 +184,10 @@ describe("Login", () => {
       )
 
       expect(
-        screen.getByRole(
-          "alert"
+        screen.getByText(
+          "Password is required."
         )
-      ).toHaveTextContent(
-        "Password is required."
-      )
+      ).toBeInTheDocument()
 
       expect(
         mockLogin
@@ -307,12 +303,10 @@ describe("Login", () => {
       await waitFor(() => {
 
         expect(
-          screen.getByRole(
-            "alert"
+          screen.getByText(
+            "Invalid username or password."
           )
-        ).toHaveTextContent(
-          "Invalid username or password."
-        )
+        ).toBeInTheDocument()
 
       })
 

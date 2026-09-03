@@ -1,10 +1,10 @@
 import {
-  useState,
-} from "react"
+  useForm,
+} from "react-hook-form"
 
-import type {
-  FormEvent,
-} from "react"
+import {
+  zodResolver,
+} from "@hookform/resolvers/zod"
 
 import {
   useNavigate,
@@ -14,112 +14,98 @@ import {
   useAuth,
 } from "../../AuthContext/useAuth"
 
+import {
+  LoginSchema,
+  type LoginFormData,
+} from "../../schemas/LoginSchema"
+
 import styles from "./Login.module.css"
+
 
 const Login = () => {
 
-  const navigate = useNavigate()
+  const navigate =
+    useNavigate()
 
   const {
     login,
   } = useAuth()
 
-  const [
-    username,
-    setUsername,
-  ] = useState("")
-
-  const [
-    password,
-    setPassword,
-  ] = useState("")
-
-  const [
-    error,
+  const {
+    register,
+    handleSubmit,
     setError,
-  ] = useState("")
+    formState: {
+      errors,
+      isSubmitting,
+    },
+  } = useForm<LoginFormData>({
+    resolver:
+      zodResolver(LoginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  })
 
-  const [
-    isLoading,
-    setIsLoading,
-  ] = useState(false)
-
-  const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
+  const onSubmit = async (
+    data: LoginFormData,
   ) => {
-
-    event.preventDefault()
-
-    setError("")
-
-    if (!username.trim()) {
-
-      setError(
-        "Username is required."
-      )
-
-      return
-    }
-
-    if (!password) {
-
-      setError(
-        "Password is required."
-      )
-
-      return
-    }
-
-    setIsLoading(true)
 
     try {
 
       await login(
-        username.trim(),
-        password
+        data.username,
+        data.password,
       )
 
       navigate("/products")
 
     } catch (error) {
 
-      if (error instanceof Error) {
-
-        setError(error.message)
-
-      } else {
-
-        setError(
-          "Unable to log in."
-        )
-      }
-
-    } finally {
-
-      setIsLoading(false)
+      setError(
+        "root",
+        {
+          message:
+            error instanceof Error
+              ? error.message
+              : "Unable to log in.",
+        },
+      )
     }
   }
 
   return (
+    <main
+      className={styles.login}
+    >
 
-    <main className={styles.login}>
+      <section
+        className={styles.card}
+      >
 
-      <section className={styles.card}>
-
-        <h1 className={styles.title}>
+        <h1
+          className={styles.title}
+        >
           Login
         </h1>
 
-        <p className={styles.message}>
+        <p
+          className={styles.message}
+        >
           Sign in to continue.
         </p>
 
         <form
           className={styles.form}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(
+            onSubmit,
+          )}
         >
 
-          <div className={styles.field}>
+          <div
+            className={styles.field}
+          >
 
             <label
               htmlFor="username"
@@ -130,19 +116,30 @@ const Login = () => {
             <input
               id="username"
               type="text"
-              value={username}
-              onChange={(event) =>
-                setUsername(
-                  event.target.value
-                )
-              }
+              {...register(
+                "username",
+              )}
               autoComplete="username"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
+
+            {errors.username && (
+              <p
+                className={styles.error}
+                role="alert"
+              >
+                {
+                  errors.username
+                    .message
+                }
+              </p>
+            )}
 
           </div>
 
-          <div className={styles.field}>
+          <div
+            className={styles.field}
+          >
 
             <label
               htmlFor="password"
@@ -153,35 +150,44 @@ const Login = () => {
             <input
               id="password"
               type="password"
-              value={password}
-              onChange={(event) =>
-                setPassword(
-                  event.target.value
-                )
-              }
+              {...register(
+                "password",
+              )}
               autoComplete="current-password"
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
+
+            {errors.password && (
+              <p
+                className={styles.error}
+                role="alert"
+              >
+                {
+                  errors.password
+                    .message
+                }
+              </p>
+            )}
 
           </div>
 
-          {error && (
-
+          {errors.root && (
             <p
               className={styles.error}
               role="alert"
             >
-              {error}
+              {
+                errors.root.message
+              }
             </p>
-
           )}
 
           <button
             className={styles.button}
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
           >
-            {isLoading
+            {isSubmitting
               ? "Signing in..."
               : "Sign in"}
           </button>
