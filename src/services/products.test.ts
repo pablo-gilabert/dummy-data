@@ -19,6 +19,18 @@ import {
   searchProducts,
 } from "./products"
 
+import {
+  CategorySchema,
+} from "../schemas/CategorySchema"
+
+import {
+  ProductSchema,
+} from "../schemas/ProductSchema"
+
+import {
+  ProductResponseSchema,
+} from "../schemas/ProductResponseSchema"
+
 import type {
   Product,
 } from "../types/Product"
@@ -200,7 +212,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products?limit=10&skip=20"
+              "/products?limit=10&skip=20",
+              ProductResponseSchema
             )
 
           }
@@ -229,7 +242,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products?limit=10&skip=0&sortBy=price&order=asc"
+              "/products?limit=10&skip=0&sortBy=price&order=asc",
+              ProductResponseSchema
             )
 
           }
@@ -258,7 +272,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products?limit=10&skip=0&sortBy=rating&order=desc"
+              "/products?limit=10&skip=0&sortBy=rating&order=desc",
+              ProductResponseSchema
             )
 
           }
@@ -294,7 +309,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/42"
+              "/products/42",
+              ProductSchema
             )
 
             expect(
@@ -331,7 +347,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/search?q=laptop&limit=10&skip=0"
+              "/products/search?q=laptop&limit=10&skip=0",
+              ProductResponseSchema
             )
 
           }
@@ -356,7 +373,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/search?q=laptop&limit=10&skip=0&sortBy=price&order=desc"
+              "/products/search?q=laptop&limit=10&skip=0&sortBy=price&order=desc",
+              ProductResponseSchema
             )
 
           }
@@ -397,7 +415,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/categories"
+              "/products/categories",
+              CategorySchema.array()
             )
 
             expect(
@@ -434,7 +453,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/category/laptops?limit=10&skip=20"
+              "/products/category/laptops?limit=10&skip=20",
+              ProductResponseSchema
             )
 
           }
@@ -458,7 +478,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/category/mobile%20phones?limit=10&skip=0"
+              "/products/category/mobile%20phones?limit=10&skip=0",
+              ProductResponseSchema
             )
 
           }
@@ -491,7 +512,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products?limit=10&skip=20"
+              "/products?limit=10&skip=20",
+              ProductResponseSchema
             )
 
           }
@@ -520,7 +542,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/category/laptops?limit=10&skip=0"
+              "/products/category/laptops?limit=10&skip=0",
+              ProductResponseSchema
             )
 
           }
@@ -549,7 +572,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/search?q=laptop&limit=0"
+              "/products/search?q=laptop&limit=0",
+              ProductResponseSchema
             )
 
           }
@@ -612,7 +636,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/search?q=product&limit=0"
+              "/products/search?q=product&limit=0",
+              ProductResponseSchema
             )
 
             expect(
@@ -655,7 +680,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/category/laptops?limit=10&skip=0&sortBy=price&order=desc"
+              "/products/category/laptops?limit=10&skip=0&sortBy=price&order=desc",
+              ProductResponseSchema
             )
 
           }
@@ -756,7 +782,8 @@ describe(
             expect(
               mockedApi
             ).toHaveBeenCalledWith(
-              "/products/search?q=laptop&limit=0"
+              "/products/search?q=laptop&limit=0",
+              ProductResponseSchema
             )
 
             expect(

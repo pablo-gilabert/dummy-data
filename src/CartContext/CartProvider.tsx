@@ -5,7 +5,17 @@ import {
   type ReactNode,
 } from "react"
 
-import type { Product } from "../types/Product"
+import {
+  z,
+} from "zod"
+
+import {
+  CartItemSchema,
+} from "../schemas/CartItemSchema"
+
+import type {
+  Product,
+} from "../types/Product"
 
 import {
   cartReducer,
@@ -32,32 +42,39 @@ const CART_STORAGE_KEY = "cart"
 
 // Each authenticated user gets an independent storage key so switching
 // accounts cannot expose another user's cart.
-const getCartStorageKey = (userId: number) => {
+const getCartStorageKey = (
+  userId: number,
+) => {
   return `${CART_STORAGE_KEY}_${userId}`
 }
 
-const getStoredCartItems = (userId: number) => {
-  const storedCart = localStorage.getItem(
-    getCartStorageKey(userId),
-  )
+const StoredCartSchema =
+  z.object({
+    items:
+      CartItemSchema.array(),
+  })
+
+const getStoredCartItems = (
+  userId: number,
+) => {
+  const storedCart =
+    localStorage.getItem(
+      getCartStorageKey(userId),
+    )
 
   if (!storedCart) {
     return []
   }
 
   try {
-    const parsedCart = JSON.parse(storedCart)
+    const data: unknown =
+      JSON.parse(storedCart)
 
-    if (
-      !parsedCart ||
-      !Array.isArray(parsedCart.items)
-    ) {
-      return []
-    }
-
-    return parsedCart.items
+    return StoredCartSchema.parse(
+      data,
+    ).items
   } catch {
-    // Corrupted local storage should behave like an empty cart.
+    // Corrupted or invalid local storage should behave like an empty cart.
     return []
   }
 }
@@ -75,7 +92,8 @@ export const CartProvider = ({
     initialCartState,
   )
 
-  const previousUserId = useRef<number | null>(null)
+  const previousUserId =
+    useRef<number | null>(null)
 
   useEffect(() => {
     // Wait for authentication initialization before deciding which cart to load.
@@ -83,102 +101,155 @@ export const CartProvider = ({
       return
     }
 
-    const currentUserId = user?.id ?? null
+    const currentUserId =
+      user?.id ?? null
 
-    if (previousUserId.current === currentUserId) {
+    if (
+      previousUserId.current ===
+      currentUserId
+    ) {
       return
     }
 
-    previousUserId.current = currentUserId
+    previousUserId.current =
+      currentUserId
 
     if (!user) {
       dispatch({
-        type: CartActionType.LOAD_CART,
+        type:
+          CartActionType.LOAD_CART,
         payload: [],
       })
       return
     }
 
-    const storedItems = getStoredCartItems(user.id)
+    const storedItems =
+      getStoredCartItems(user.id)
 
     dispatch({
-      type: CartActionType.LOAD_CART,
+      type:
+        CartActionType.LOAD_CART,
       payload: storedItems,
     })
   }, [user, isLoading])
 
   // Persist only successful state transitions. The reducer is reused here to
   // calculate the exact next state before React schedules the dispatch.
-  const persistCart = (items: typeof state.items) => {
+  const persistCart = (
+    items: typeof state.items,
+  ) => {
     if (!user) {
       return
     }
 
-    const storageKey = getCartStorageKey(user.id)
+    const storageKey =
+      getCartStorageKey(user.id)
 
     if (items.length === 0) {
-      localStorage.removeItem(storageKey)
+      localStorage.removeItem(
+        storageKey,
+      )
       return
     }
 
     localStorage.setItem(
       storageKey,
-      JSON.stringify({ items }),
+      JSON.stringify({
+        items,
+      }),
     )
   }
 
-  const addItem = (product: Product) => {
+  const addItem = (
+    product: Product,
+  ) => {
     const action = {
-      type: CartActionType.ADD_ITEM,
+      type:
+        CartActionType.ADD_ITEM,
       payload: product,
     } as const
 
-    const nextState = cartReducer(state, action)
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
     dispatch(action)
 
     if (nextState !== state) {
-      persistCart(nextState.items)
+      persistCart(
+        nextState.items,
+      )
     }
   }
 
-  const removeItem = (productId: number) => {
+  const removeItem = (
+    productId: number,
+  ) => {
     const action = {
-      type: CartActionType.REMOVE_ITEM,
+      type:
+        CartActionType.REMOVE_ITEM,
       payload: productId,
     } as const
 
-    const nextState = cartReducer(state, action)
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
     dispatch(action)
 
     if (nextState !== state) {
-      persistCart(nextState.items)
+      persistCart(
+        nextState.items,
+      )
     }
   }
 
-  const clearItem = (productId: number) => {
+  const clearItem = (
+    productId: number,
+  ) => {
     const action = {
-      type: CartActionType.CLEAR_ITEM,
+      type:
+        CartActionType.CLEAR_ITEM,
       payload: productId,
     } as const
 
-    const nextState = cartReducer(state, action)
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
     dispatch(action)
 
     if (nextState !== state) {
-      persistCart(nextState.items)
+      persistCart(
+        nextState.items,
+      )
     }
   }
 
   const clearCart = () => {
     const action = {
-      type: CartActionType.CLEAR_CART,
+      type:
+        CartActionType.CLEAR_CART,
     } as const
 
-    const nextState = cartReducer(state, action)
+    const nextState =
+      cartReducer(
+        state,
+        action,
+      )
+
     dispatch(action)
 
     if (nextState !== state) {
-      persistCart(nextState.items)
+      persistCart(
+        nextState.items,
+      )
     }
   }
 

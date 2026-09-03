@@ -1,29 +1,18 @@
-import type { CartItem } from "./CartItem"
+import {
+  z,
+} from "zod"
 
-export interface OrderCustomer {
+import {
+  OrderCustomerSchema,
+  OrderSchema,
+} from "../schemas/OrderSchema"
 
-  name: string
+export type OrderCustomer =
+  z.infer<
+    typeof OrderCustomerSchema
+  >
 
-  email: string
-
-  phone: string
-
-  address: string
-
-  city: string
-}
-
-export interface Order {
-
-  id: string
-
-  userId: number
-
-  createdAt: string
-
-  customer: OrderCustomer
-
-  items: CartItem[]
-
-  total: number
-}
+export type Order =
+  z.infer<
+    typeof OrderSchema
+  >

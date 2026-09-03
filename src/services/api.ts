@@ -1,3 +1,7 @@
+import {
+  z,
+} from "zod"
+
 const API_BASE_URL = "https://dummyjson.com"
 
 // A typed error keeps HTTP status information available to callers while
@@ -19,9 +23,10 @@ export class ApiError extends Error {
 }
 
 // Generic API wrapper used by product and other public services. It centralizes
-// network, HTTP, and malformed-response handling instead of repeating it in services.
+// network, HTTP, JSON parsing, and runtime schema validation.
 export const api = async <T>(
   endpoint: string,
+  schema: z.ZodType<T>,
   options?: RequestInit,
 ): Promise<T> => {
   let response: Response
@@ -47,11 +52,23 @@ export const api = async <T>(
     )
   }
 
+  let data: unknown
+
   try {
-    return await response.json()
+    data = await response.json()
   } catch {
     throw new ApiError(
       "The server returned an invalid response.",
+      response.status,
+      response.statusText,
+    )
+  }
+
+  try {
+    return schema.parse(data)
+  } catch {
+    throw new ApiError(
+      "The server returned data with an invalid format.",
       response.status,
       response.statusText,
     )

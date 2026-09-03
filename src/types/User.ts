@@ -1,11 +1,12 @@
-export interface User {
-  id: number
-  username: string
-  email: string
-  firstName: string
-  lastName: string
-  gender: string
-  image: string
-  accessToken: string
-  refreshToken: string
-}
+import {
+  z,
+} from "zod"
+
+import {
+  UserSchema,
+} from "../schemas/UserSchema"
+
+export type User = z.infer<
+  typeof UserSchema
+>
+

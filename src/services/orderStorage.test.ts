@@ -16,7 +16,7 @@ import {
 
 const createOrder = (
   id: string,
-  userId: number
+  userId: number,
 ): Order => ({
   id,
   userId,
@@ -39,172 +39,268 @@ describe("orderStorage", () => {
     localStorage.clear()
   })
 
-  it("returns an empty array when there are no orders", () => {
+  it(
+    "returns an empty array when there are no orders",
+    () => {
 
-    expect(
-      getOrders(1)
-    ).toEqual([])
-  })
+      expect(
+        getOrders(1),
+      ).toEqual([])
+    },
+  )
 
-  it("saves and retrieves an order", () => {
+  it(
+    "saves and retrieves an order",
+    () => {
 
-    const order =
-      createOrder(
-        "order-1",
-        1
+      const order =
+        createOrder(
+          "order-1",
+          1,
+        )
+
+      saveOrder(order)
+
+      expect(
+        getOrders(1),
+      ).toEqual([
+        order,
+      ])
+    },
+  )
+
+  it(
+    "returns only orders belonging to the requested user",
+    () => {
+
+      const userOneOrder =
+        createOrder(
+          "order-1",
+          1,
+        )
+
+      const userTwoOrder =
+        createOrder(
+          "order-2",
+          2,
+        )
+
+      saveOrder(userOneOrder)
+      saveOrder(userTwoOrder)
+
+      expect(
+        getOrders(1),
+      ).toEqual([
+        userOneOrder,
+      ])
+
+      expect(
+        getOrders(2),
+      ).toEqual([
+        userTwoOrder,
+      ])
+    },
+  )
+
+  it(
+    "keeps multiple orders for the same user",
+    () => {
+
+      const firstOrder =
+        createOrder(
+          "order-1",
+          1,
+        )
+
+      const secondOrder =
+        createOrder(
+          "order-2",
+          1,
+        )
+
+      saveOrder(firstOrder)
+      saveOrder(secondOrder)
+
+      expect(
+        getOrders(1),
+      ).toEqual([
+        firstOrder,
+        secondOrder,
+      ])
+    },
+  )
+
+  it(
+    "returns an empty array when stored orders are invalid",
+    () => {
+
+      localStorage.setItem(
+        "orders",
+        "{invalid json",
       )
 
-    saveOrder(order)
+      expect(
+        getOrders(1),
+      ).toEqual([])
+    },
+  )
 
-    expect(
-      getOrders(1)
-    ).toEqual([
-      order,
-    ])
-  })
+  it(
+    "returns an empty array when stored orders are not an array",
+    () => {
 
-  it("returns only orders belonging to the requested user", () => {
-
-    const userOneOrder =
-      createOrder(
-        "order-1",
-        1
+      localStorage.setItem(
+        "orders",
+        JSON.stringify({
+          invalid: true,
+        }),
       )
 
-    const userTwoOrder =
-      createOrder(
-        "order-2",
-        2
+      expect(
+        getOrders(1),
+      ).toEqual([])
+    },
+  )
+
+  it(
+    "returns an empty array when stored orders have an invalid format",
+    () => {
+
+      localStorage.setItem(
+        "orders",
+        JSON.stringify([
+          {
+            id: 123,
+            userId: "invalid-user-id",
+            createdAt:
+              "2026-01-01T00:00:00.000Z",
+            customer: {
+              name: "Test User",
+              email:
+                "test@example.com",
+              phone: "123456789",
+              address:
+                "Test Address",
+              city: "Test City",
+            },
+            items: [],
+            total: 100,
+          },
+        ]),
       )
 
-    saveOrder(userOneOrder)
-    saveOrder(userTwoOrder)
+      expect(
+        getOrders(1),
+      ).toEqual([])
+    },
+  )
 
-    expect(
-      getOrders(1)
-    ).toEqual([
-      userOneOrder,
-    ])
+  it(
+    "returns an empty array when a stored order contains an invalid product",
+    () => {
 
-    expect(
-      getOrders(2)
-    ).toEqual([
-      userTwoOrder,
-    ])
-  })
-
-  it("keeps multiple orders for the same user", () => {
-
-    const firstOrder =
-      createOrder(
-        "order-1",
-        1
+      localStorage.setItem(
+        "orders",
+        JSON.stringify([
+          {
+            id: "order-1",
+            userId: 1,
+            createdAt:
+              "2026-01-01T00:00:00.000Z",
+            customer: {
+              name: "Test User",
+              email:
+                "test@example.com",
+              phone: "123456789",
+              address:
+                "Test Address",
+              city: "Test City",
+            },
+            items: [
+              {
+                product: {
+                  id: "invalid-product-id",
+                },
+                quantity: 1,
+              },
+            ],
+            total: 100,
+          },
+        ]),
       )
 
-    const secondOrder =
-      createOrder(
-        "order-2",
-        1
+      expect(
+        getOrders(1),
+      ).toEqual([])
+    },
+  )
+
+  it(
+    "starts with a new order when stored orders are invalid",
+    () => {
+
+      localStorage.setItem(
+        "orders",
+        "{invalid json",
       )
 
-    saveOrder(firstOrder)
-    saveOrder(secondOrder)
+      const order =
+        createOrder(
+          "order-1",
+          1,
+        )
 
-    expect(
-      getOrders(1)
-    ).toEqual([
-      firstOrder,
-      secondOrder,
-    ])
-  })
+      saveOrder(order)
 
-  it("returns an empty array when stored orders are invalid", () => {
+      expect(
+        getOrders(1),
+      ).toEqual([
+        order,
+      ])
+    },
+  )
 
-    localStorage.setItem(
-      "orders",
-      "{invalid json"
-    )
+  it(
+    "saves a new order alongside existing orders",
+    () => {
 
-    expect(
-      getOrders(1)
-    ).toEqual([])
-  })
+      const firstOrder =
+        createOrder(
+          "order-1",
+          1,
+        )
 
-  it("returns an empty array when stored orders are not an array", () => {
+      const secondOrder =
+        createOrder(
+          "order-2",
+          2,
+        )
 
-    localStorage.setItem(
-      "orders",
-      JSON.stringify({
-        invalid: true,
-      })
-    )
+      saveOrder(firstOrder)
+      saveOrder(secondOrder)
 
-    expect(
-      getOrders(1)
-    ).toEqual([])
-  })
+      expect(
+        getOrders(1),
+      ).toEqual([
+        firstOrder,
+      ])
 
-  it("starts with a new order when stored orders are invalid", () => {
+      expect(
+        getOrders(2),
+      ).toEqual([
+        secondOrder,
+      ])
 
-    localStorage.setItem(
-      "orders",
-      "{invalid json"
-    )
-
-    const order =
-      createOrder(
-        "order-1",
-        1
-      )
-
-    saveOrder(order)
-
-    expect(
-      getOrders(1)
-    ).toEqual([
-      order,
-    ])
-  })
-
-  it("saves a new order alongside existing orders", () => {
-
-    const firstOrder =
-      createOrder(
-        "order-1",
-        1
-      )
-
-    const secondOrder =
-      createOrder(
-        "order-2",
-        2
-      )
-
-    saveOrder(firstOrder)
-    saveOrder(secondOrder)
-
-    expect(
-      getOrders(1)
-    ).toEqual([
-      firstOrder,
-    ])
-
-    expect(
-      getOrders(2)
-    ).toEqual([
-      secondOrder,
-    ])
-
-    expect(
-      JSON.parse(
-        localStorage.getItem(
-          "orders"
-        ) ?? "[]"
-      )
-    ).toEqual([
-      firstOrder,
-      secondOrder,
-    ])
-  })
-
+      expect(
+        JSON.parse(
+          localStorage.getItem(
+            "orders",
+          ) ?? "[]",
+        ),
+      ).toEqual([
+        firstOrder,
+        secondOrder,
+      ])
+    },
+  )
 })

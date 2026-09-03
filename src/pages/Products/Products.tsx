@@ -3,7 +3,6 @@ import {
 } from "react"
 
 import type {
-  ChangeEvent,
   FormEvent,
 } from "react"
 
@@ -11,9 +10,9 @@ import {
   useSearchParams,
 } from "react-router-dom"
 
-import type {
-  ProductSort,
-} from "../../services/products"
+import {
+  ProductSortSchema,
+} from "../../schemas/ProductSortSchema"
 
 import {
   useProducts,
@@ -44,29 +43,39 @@ const Products = () => {
 
   const search =
     searchParams.get(
-      "search"
+      "search",
     ) ?? ""
 
 
   const selectedCategory =
     searchParams.get(
-      "category"
+      "category",
     ) ?? ""
 
 
+  const sortParam =
+    searchParams.get(
+      "sort",
+    ) ?? ""
+
+
+  const parsedSort =
+    ProductSortSchema.safeParse(
+      sortParam,
+    )
+
+
   const sort =
-    (
-      searchParams.get(
-        "sort"
-      ) ?? ""
-    ) as ProductSort
+    parsedSort.success
+      ? parsedSort.data
+      : ""
 
 
   const currentPage =
     Number(
       searchParams.get(
-        "page"
-      ) ?? "1"
+        "page",
+      ) ?? "1",
     )
 
 
@@ -80,7 +89,7 @@ const Products = () => {
     searchInput,
     setSearchInput,
   ] = useState(
-    search
+    search,
   )
 
 
@@ -125,7 +134,7 @@ const Products = () => {
 
 
   const handleSubmit = (
-    event: FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>,
   ) => {
 
     event.preventDefault()
@@ -166,7 +175,7 @@ const Products = () => {
 
 
     setSearchParams(
-      params
+      params,
     )
 
   }
@@ -200,14 +209,14 @@ const Products = () => {
 
 
     setSearchParams(
-      params
+      params,
     )
 
   }
 
 
   const handleCategoryChange = (
-    categorySlug: string
+    categorySlug: string,
   ) => {
 
     const params:
@@ -238,7 +247,7 @@ const Products = () => {
 
 
     setSearchParams(
-      params
+      params,
     )
 
   }
@@ -269,18 +278,26 @@ const Products = () => {
 
 
     setSearchParams(
-      params
+      params,
     )
 
   }
 
 
   const handleSortChange = (
-    event: ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
 
+    const parsedSort =
+      ProductSortSchema.safeParse(
+        event.target.value,
+      )
+
+
     const selectedSort =
-      event.target.value as ProductSort
+      parsedSort.success
+        ? parsedSort.data
+        : ""
 
 
     const params:
@@ -314,14 +331,14 @@ const Products = () => {
 
 
     setSearchParams(
-      params
+      params,
     )
 
   }
 
 
   const handlePageChange = (
-    newPage: number
+    newPage: number,
   ) => {
 
     const params:
@@ -358,7 +375,7 @@ const Products = () => {
 
 
     setSearchParams(
-      params
+      params,
     )
 
   }
@@ -410,7 +427,7 @@ const Products = () => {
   const totalPages =
     Math.ceil(
       data.total /
-      PRODUCTS_PER_PAGE
+      PRODUCTS_PER_PAGE,
     )
 
 
@@ -468,7 +485,7 @@ const Products = () => {
           onChange={(event) => {
 
             setSearchInput(
-              event.target.value
+              event.target.value,
             )
 
           }}
@@ -566,13 +583,13 @@ const Products = () => {
                 type="button"
                 onClick={() =>
                   handleCategoryChange(
-                    categoryItem.slug
+                    categoryItem.slug,
                   )
                 }
               >
                 {
                   formatCategory(
-                    categoryItem.name
+                    categoryItem.name,
                   )
                 }
               </button>
@@ -717,7 +734,7 @@ const Products = () => {
             type="button"
             onClick={() =>
               handlePageChange(
-                page - 1
+                page - 1,
               )
             }
             disabled={
@@ -744,7 +761,7 @@ const Products = () => {
             type="button"
             onClick={() =>
               handlePageChange(
-                page + 1
+                page + 1,
               )
             }
             disabled={

@@ -21,7 +21,7 @@ vi.mock(
   () => ({
     apiClient:
       vi.fn(),
-  })
+  }),
 )
 
 const mockedApiClient =
@@ -30,16 +30,13 @@ const mockedApiClient =
 const createResponse = (
   data: unknown,
   ok = true,
-  status = 200
+  status = 200,
 ): Response => {
-
   return {
     ok,
     status,
-
     json:
       async () => data,
-
   } as Response
 }
 
@@ -59,12 +56,11 @@ const mockUser = {
 describe("auth service", () => {
 
   beforeEach(() => {
-
     vi.clearAllMocks()
 
     vi.stubGlobal(
       "fetch",
-      vi.fn()
+      vi.fn(),
     )
   })
 
@@ -79,17 +75,17 @@ describe("auth service", () => {
 
         fetchMock.mockResolvedValue(
           createResponse(
-            mockUser
-          )
+            mockUser,
+          ),
         )
 
         await loginUser(
           "emilys",
-          "emily_pass"
+          "emily_pass",
         )
 
         expect(
-          fetchMock
+          fetchMock,
         ).toHaveBeenCalledWith(
           "https://dummyjson.com/auth/login",
           {
@@ -106,9 +102,9 @@ describe("auth service", () => {
               password:
                 "emily_pass",
             }),
-          }
+          },
         )
-      }
+      },
     )
 
     it(
@@ -120,22 +116,22 @@ describe("auth service", () => {
 
         fetchMock.mockResolvedValue(
           createResponse(
-            mockUser
-          )
+            mockUser,
+          ),
         )
 
         const result =
           await loginUser(
             "emilys",
-            "emily_pass"
+            "emily_pass",
           )
 
         expect(
-          result
+          result,
         ).toEqual(
-          mockUser
+          mockUser,
         )
-      }
+      },
     )
 
     it(
@@ -149,19 +145,42 @@ describe("auth service", () => {
           createResponse(
             {},
             false,
-            401
-          )
+            401,
+          ),
         )
 
         await expect(
           loginUser(
             "wrong-user",
-            "wrong-password"
-          )
+            "wrong-password",
+          ),
         ).rejects.toThrow(
-          "Invalid username or password."
+          "Invalid username or password.",
         )
-      }
+      },
+    )
+
+    it(
+      "throws when the login response has an invalid format",
+      async () => {
+
+        const fetchMock =
+          vi.mocked(fetch)
+
+        fetchMock.mockResolvedValue(
+          createResponse({
+            id: "invalid-id",
+            username: "emilys",
+          }),
+        )
+
+        await expect(
+          loginUser(
+            "emilys",
+            "emily_pass",
+          ),
+        ).rejects.toThrow()
+      },
     )
   })
 
@@ -173,21 +192,21 @@ describe("auth service", () => {
 
         mockedApiClient.mockResolvedValue(
           createResponse(
-            mockUser
-          )
+            mockUser,
+          ),
         )
 
         await getCurrentUser()
 
         expect(
-          mockedApiClient
+          mockedApiClient,
         ).toHaveBeenCalledWith(
           "https://dummyjson.com/auth/me",
           {
             authenticated: true,
-          }
+          },
         )
-      }
+      },
     )
 
     it(
@@ -196,19 +215,19 @@ describe("auth service", () => {
 
         mockedApiClient.mockResolvedValue(
           createResponse(
-            mockUser
-          )
+            mockUser,
+          ),
         )
 
         const result =
           await getCurrentUser()
 
         expect(
-          result
+          result,
         ).toEqual(
-          mockUser
+          mockUser,
         )
-      }
+      },
     )
 
     it(
@@ -219,16 +238,33 @@ describe("auth service", () => {
           createResponse(
             {},
             false,
-            401
-          )
+            401,
+          ),
         )
 
         await expect(
-          getCurrentUser()
+          getCurrentUser(),
         ).rejects.toThrow(
-          "Unable to retrieve authenticated user."
+          "Unable to retrieve authenticated user.",
         )
-      }
+      },
+    )
+
+    it(
+      "throws when the current user response has an invalid format",
+      async () => {
+
+        mockedApiClient.mockResolvedValue(
+          createResponse({
+            id: "invalid-id",
+            username: "emilys",
+          }),
+        )
+
+        await expect(
+          getCurrentUser(),
+        ).rejects.toThrow()
+      },
     )
   })
 
@@ -250,16 +286,16 @@ describe("auth service", () => {
 
         fetchMock.mockResolvedValue(
           createResponse(
-            refreshedTokens
-          )
+            refreshedTokens,
+          ),
         )
 
         await refreshAuthToken(
-          "old-refresh-token"
+          "old-refresh-token",
         )
 
         expect(
-          fetchMock
+          fetchMock,
         ).toHaveBeenCalledWith(
           "https://dummyjson.com/auth/refresh",
           {
@@ -274,9 +310,9 @@ describe("auth service", () => {
               refreshToken:
                 "old-refresh-token",
             }),
-          }
+          },
         )
-      }
+      },
     )
 
     it(
@@ -295,21 +331,21 @@ describe("auth service", () => {
 
         fetchMock.mockResolvedValue(
           createResponse(
-            refreshedTokens
-          )
+            refreshedTokens,
+          ),
         )
 
         const result =
           await refreshAuthToken(
-            "old-refresh-token"
+            "old-refresh-token",
           )
 
         expect(
-          result
+          result,
         ).toEqual(
-          refreshedTokens
+          refreshedTokens,
         )
-      }
+      },
     )
 
     it(
@@ -323,18 +359,40 @@ describe("auth service", () => {
           createResponse(
             {},
             false,
-            401
-          )
+            401,
+          ),
         )
 
         await expect(
           refreshAuthToken(
-            "invalid-refresh-token"
-          )
+            "invalid-refresh-token",
+          ),
         ).rejects.toThrow(
-          "Unable to refresh authentication."
+          "Unable to refresh authentication.",
         )
-      }
+      },
+    )
+
+    it(
+      "throws when the refresh response has an invalid format",
+      async () => {
+
+        const fetchMock =
+          vi.mocked(fetch)
+
+        fetchMock.mockResolvedValue(
+          createResponse({
+            accessToken: 123,
+            refreshToken: true,
+          }),
+        )
+
+        await expect(
+          refreshAuthToken(
+            "old-refresh-token",
+          ),
+        ).rejects.toThrow()
+      },
     )
   })
 })

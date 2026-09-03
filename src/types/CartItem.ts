@@ -1,6 +1,12 @@
-import type { Product } from "./Product"
+import {
+  z,
+} from "zod"
 
-export interface CartItem {
-  product: Product
-  quantity: number
-}
+import {
+  CartItemSchema,
+} from "../schemas/CartItemSchema"
+
+export type CartItem =
+  z.infer<
+    typeof CartItemSchema
+  >

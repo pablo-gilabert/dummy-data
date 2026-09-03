@@ -10,7 +10,7 @@ import {
 
 import type {
   ProductSort,
-} from "../services/products"
+} from "../types/ProductSort"
 
 import {
   queryKeys,

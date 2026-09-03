@@ -1,3 +1,7 @@
+import {
+  OrderSchema,
+} from "../schemas/OrderSchema"
+
 import type {
   Order,
 } from "../types/Order"
@@ -6,26 +10,41 @@ const ORDERS_KEY = "orders"
 
 // Orders are intentionally stored as local application data because the
 // DummyJSON API does not provide the backend used by this portfolio checkout flow.
-export const getOrders = (userId: number): Order[] => {
-  const storedOrders = localStorage.getItem(ORDERS_KEY)
+export const getOrders = (
+  userId: number,
+): Order[] => {
+  const storedOrders =
+    localStorage.getItem(
+      ORDERS_KEY,
+    )
 
   if (!storedOrders) {
     return []
   }
 
   try {
-    const orders = JSON.parse(storedOrders) as Order[]
+    const data: unknown =
+      JSON.parse(storedOrders)
+
+    const orders =
+      OrderSchema.array().parse(
+        data,
+      )
 
     return orders.filter(
-      (order) => order.userId === userId,
+      (order) =>
+        order.userId === userId,
     )
   } catch {
     return []
   }
 }
 
-export const saveOrder = (order: Order): void => {
-  const orders = getAllOrders()
+export const saveOrder = (
+  order: Order,
+): void => {
+  const orders =
+    getAllOrders()
 
   const updatedOrders = [
     ...orders,
@@ -34,20 +53,31 @@ export const saveOrder = (order: Order): void => {
 
   localStorage.setItem(
     ORDERS_KEY,
-    JSON.stringify(updatedOrders),
+    JSON.stringify(
+      updatedOrders,
+    ),
   )
 }
 
-const getAllOrders = (): Order[] => {
-  const storedOrders = localStorage.getItem(ORDERS_KEY)
+const getAllOrders =
+  (): Order[] => {
+    const storedOrders =
+      localStorage.getItem(
+        ORDERS_KEY,
+      )
 
-  if (!storedOrders) {
-    return []
-  }
+    if (!storedOrders) {
+      return []
+    }
 
-  try {
-    return JSON.parse(storedOrders) as Order[]
-  } catch {
-    return []
+    try {
+      const data: unknown =
+        JSON.parse(storedOrders)
+
+      return OrderSchema.array().parse(
+        data,
+      )
+    } catch {
+      return []
+    }
   }
-}

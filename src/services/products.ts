@@ -1,25 +1,35 @@
+import {
+  CategorySchema,
+} from "../schemas/CategorySchema"
+
+import {
+  ProductResponseSchema,
+} from "../schemas/ProductResponseSchema"
+
+import {
+  ProductSchema,
+} from "../schemas/ProductSchema"
+
 import type {
   Category,
 } from "../types/Category"
+
 import type {
   Product,
 } from "../types/Product"
+
 import type {
   ProductResponse,
 } from "../types/ProductResponse"
+
+import type {
+  ProductSort,
+} from "../types/ProductSort"
 
 import {
   api,
 } from "./api"
 
-export type ProductSort =
-  | ""
-  | "price-asc"
-  | "price-desc"
-  | "rating-desc"
-  | "rating-asc"
-  | "title-asc"
-  | "title-desc"
 
 interface FetchProductsParams {
   limit: number
@@ -27,113 +37,191 @@ interface FetchProductsParams {
   sort?: ProductSort
 }
 
+
+type SortParams = {
+  sortBy?: "price" | "rating" | "title"
+  order?: "asc" | "desc"
+}
+
+
 // Converts the UI sort value into the query parameters expected by DummyJSON.
-const getSortParams = (sort: ProductSort) => {
+const getSortParams = (
+  sort: ProductSort,
+): SortParams => {
   switch (sort) {
     case "price-asc":
-      return { sortBy: "price", order: "asc" }
+      return {
+        sortBy: "price",
+        order: "asc",
+      }
+
     case "price-desc":
-      return { sortBy: "price", order: "desc" }
+      return {
+        sortBy: "price",
+        order: "desc",
+      }
+
     case "rating-desc":
-      return { sortBy: "rating", order: "desc" }
+      return {
+        sortBy: "rating",
+        order: "desc",
+      }
+
     case "rating-asc":
-      return { sortBy: "rating", order: "asc" }
+      return {
+        sortBy: "rating",
+        order: "asc",
+      }
+
     case "title-asc":
-      return { sortBy: "title", order: "asc" }
+      return {
+        sortBy: "title",
+        order: "asc",
+      }
+
     case "title-desc":
-      return { sortBy: "title", order: "desc" }
+      return {
+        sortBy: "title",
+        order: "desc",
+      }
+
     default:
       return {}
   }
 }
+
 
 export const getProducts = async ({
   limit,
   skip,
   sort = "",
 }: FetchProductsParams): Promise<ProductResponse> => {
-  const sortParams = getSortParams(sort)
+  const sortParams =
+    getSortParams(sort)
 
-  const params = new URLSearchParams({
-    limit: String(limit),
-    skip: String(skip),
-  })
+  const params =
+    new URLSearchParams({
+      limit: String(limit),
+      skip: String(skip),
+    })
 
   if (sortParams.sortBy) {
-    params.set("sortBy", sortParams.sortBy)
+    params.set(
+      "sortBy",
+      sortParams.sortBy,
+    )
   }
 
   if (sortParams.order) {
-    params.set("order", sortParams.order)
+    params.set(
+      "order",
+      sortParams.order,
+    )
   }
 
-  return api<ProductResponse>(
+  return api(
     `/products?${params.toString()}`,
+    ProductResponseSchema,
   )
 }
 
-export const getProduct = async (
-  id: number,
-): Promise<Product> => {
-  return api<Product>(`/products/${id}`)
-}
 
-export const searchProducts = async (
-  query: string,
-  limit: number,
-  skip: number,
-  sort: ProductSort = "",
-): Promise<ProductResponse> => {
-  const sortParams = getSortParams(sort)
-
-  const params = new URLSearchParams({
-    q: query,
-    limit: String(limit),
-    skip: String(skip),
-  })
-
-  if (sortParams.sortBy) {
-    params.set("sortBy", sortParams.sortBy)
+export const getProduct =
+  async (
+    id: number,
+  ): Promise<Product> => {
+    return api(
+      `/products/${id}`,
+      ProductSchema,
+    )
   }
 
-  if (sortParams.order) {
-    params.set("order", sortParams.order)
+
+export const searchProducts =
+  async (
+    query: string,
+    limit: number,
+    skip: number,
+    sort: ProductSort = "",
+  ): Promise<ProductResponse> => {
+    const sortParams =
+      getSortParams(sort)
+
+    const params =
+      new URLSearchParams({
+        q: query,
+        limit: String(limit),
+        skip: String(skip),
+      })
+
+    if (sortParams.sortBy) {
+      params.set(
+        "sortBy",
+        sortParams.sortBy,
+      )
+    }
+
+    if (sortParams.order) {
+      params.set(
+        "order",
+        sortParams.order,
+      )
+    }
+
+    return api(
+      `/products/search?${params.toString()}`,
+      ProductResponseSchema,
+    )
   }
 
-  return api<ProductResponse>(
-    `/products/search?${params.toString()}`,
-  )
-}
 
-export const getCategories = async (): Promise<Category[]> => {
-  return api<Category[]>("/products/categories")
-}
-
-export const getProductsByCategory = async (
-  category: string,
-  limit: number,
-  skip: number,
-  sort: ProductSort = "",
-): Promise<ProductResponse> => {
-  const sortParams = getSortParams(sort)
-
-  const params = new URLSearchParams({
-    limit: String(limit),
-    skip: String(skip),
-  })
-
-  if (sortParams.sortBy) {
-    params.set("sortBy", sortParams.sortBy)
+export const getCategories =
+  async (): Promise<Category[]> => {
+    return api(
+      "/products/categories",
+      CategorySchema.array(),
+    )
   }
 
-  if (sortParams.order) {
-    params.set("order", sortParams.order)
+
+export const getProductsByCategory =
+  async (
+    category: string,
+    limit: number,
+    skip: number,
+    sort: ProductSort = "",
+  ): Promise<ProductResponse> => {
+    const sortParams =
+      getSortParams(sort)
+
+    const params =
+      new URLSearchParams({
+        limit: String(limit),
+        skip: String(skip),
+      })
+
+    if (sortParams.sortBy) {
+      params.set(
+        "sortBy",
+        sortParams.sortBy,
+      )
+    }
+
+    if (sortParams.order) {
+      params.set(
+        "order",
+        sortParams.order,
+      )
+    }
+
+    return api(
+      `/products/category/${encodeURIComponent(
+        category,
+      )}?${params.toString()}`,
+      ProductResponseSchema,
+    )
   }
 
-  return api<ProductResponse>(
-    `/products/category/${encodeURIComponent(category)}?${params.toString()}`,
-  )
-}
 
 interface GetFilteredProductsParams {
   search?: string
@@ -143,90 +231,129 @@ interface GetFilteredProductsParams {
   sort?: ProductSort
 }
 
+
 // DummyJSON exposes search and category endpoints separately. When both filters
 // are selected, search results are fetched first, then category/sort/pagination
 // are applied locally to keep the UI behavior consistent.
-export const getFilteredProducts = async ({
-  search = "",
-  category = "",
-  limit,
-  skip,
-  sort = "",
-}: GetFilteredProductsParams): Promise<ProductResponse> => {
-  const sortParams = getSortParams(sort)
+export const getFilteredProducts =
+  async ({
+    search = "",
+    category = "",
+    limit,
+    skip,
+    sort = "",
+  }: GetFilteredProductsParams): Promise<ProductResponse> => {
+    const sortParams =
+      getSortParams(sort)
 
-  if (search) {
-    const searchParams = new URLSearchParams({
-      q: search,
-      limit: "0",
-    })
+    if (search) {
+      const searchParams =
+        new URLSearchParams({
+          q: search,
+          limit: "0",
+        })
 
-    const searchResponse = await api<ProductResponse>(
-      `/products/search?${searchParams.toString()}`,
-    )
+      const searchResponse =
+        await api(
+          `/products/search?${searchParams.toString()}`,
+          ProductResponseSchema,
+        )
 
-    let products = searchResponse.products
+      let products =
+        searchResponse.products
+
+      if (category) {
+        products =
+          products.filter(
+            (product) =>
+              product.category ===
+              category,
+          )
+      }
+
+      if (
+        sortParams.sortBy &&
+        sortParams.order
+      ) {
+        const field =
+          sortParams.sortBy
+
+        const order =
+          sortParams.order
+
+        products = [
+          ...products,
+        ].sort(
+          (a, b) => {
+            const valueA =
+              a[field]
+
+            const valueB =
+              b[field]
+
+            if (
+              typeof valueA ===
+                "number" &&
+              typeof valueB ===
+                "number"
+            ) {
+              return order ===
+                "asc"
+                ? valueA - valueB
+                : valueB - valueA
+            }
+
+            if (
+              typeof valueA ===
+                "string" &&
+              typeof valueB ===
+                "string"
+            ) {
+              return order ===
+                "asc"
+                ? valueA.localeCompare(
+                    valueB,
+                  )
+                : valueB.localeCompare(
+                    valueA,
+                  )
+            }
+
+            return 0
+          },
+        )
+      }
+
+      const total =
+        products.length
+
+      const paginatedProducts =
+        products.slice(
+          skip,
+          skip + limit,
+        )
+
+      return {
+        products:
+          paginatedProducts,
+        total,
+        skip,
+        limit,
+      }
+    }
 
     if (category) {
-      products = products.filter(
-        (product) => product.category === category,
+      return getProductsByCategory(
+        category,
+        limit,
+        skip,
+        sort,
       )
     }
 
-    if (sortParams.sortBy && sortParams.order) {
-      products = [...products].sort((a, b) => {
-        const field = sortParams.sortBy as keyof Product
-        const valueA = a[field]
-        const valueB = b[field]
-
-        if (
-          typeof valueA === "number" &&
-          typeof valueB === "number"
-        ) {
-          return sortParams.order === "asc"
-            ? valueA - valueB
-            : valueB - valueA
-        }
-
-        if (
-          typeof valueA === "string" &&
-          typeof valueB === "string"
-        ) {
-          return sortParams.order === "asc"
-            ? valueA.localeCompare(valueB)
-            : valueB.localeCompare(valueA)
-        }
-
-        return 0
-      })
-    }
-
-    const total = products.length
-    const paginatedProducts = products.slice(
-      skip,
-      skip + limit,
-    )
-
-    return {
-      products: paginatedProducts,
-      total,
-      skip,
-      limit,
-    }
-  }
-
-  if (category) {
-    return getProductsByCategory(
-      category,
+    return getProducts({
       limit,
       skip,
       sort,
-    )
+    })
   }
-
-  return getProducts({
-    limit,
-    skip,
-    sort,
-  })
-}

@@ -7,6 +7,10 @@ import {
 } from "vitest"
 
 import {
+  z,
+} from "zod"
+
+import {
   api,
   ApiError,
 } from "./api"
@@ -25,6 +29,12 @@ describe("api", () => {
         id: 1,
         title: "Test product",
       }
+
+      const TestResponseSchema =
+        z.object({
+          id: z.number(),
+          title: z.string(),
+        })
 
       const fetchMock =
         vi
@@ -49,10 +59,10 @@ describe("api", () => {
           )
 
       const result =
-        await api<{
-          id: number
-          title: string
-        }>("/products/1")
+        await api(
+          "/products/1",
+          TestResponseSchema
+        )
 
       expect(
         result
@@ -72,6 +82,11 @@ describe("api", () => {
   it(
     "passes the request options to fetch",
     async () => {
+
+      const TestResponseSchema =
+        z.object({
+          success: z.boolean(),
+        })
 
       const fetchMock =
         vi
@@ -104,6 +119,7 @@ describe("api", () => {
 
       await api(
         "/test",
+        TestResponseSchema,
         options
       )
 
@@ -119,6 +135,11 @@ describe("api", () => {
   it(
     "throws ApiError when the server returns a non-ok response",
     async () => {
+
+      const TestResponseSchema =
+        z.object({
+          message: z.string(),
+        })
 
       vi
         .spyOn(
@@ -139,7 +160,10 @@ describe("api", () => {
         )
 
       await expect(
-        api("/products/999")
+        api(
+          "/products/999",
+          TestResponseSchema
+        )
       ).rejects.toMatchObject({
         name: "ApiError",
         message:
@@ -155,6 +179,11 @@ describe("api", () => {
     "throws ApiError when the network request fails",
     async () => {
 
+      const TestResponseSchema =
+        z.object({
+          id: z.number(),
+        })
+
       vi
         .spyOn(
           globalThis,
@@ -167,7 +196,10 @@ describe("api", () => {
         )
 
       await expect(
-        api("/products")
+        api(
+          "/products",
+          TestResponseSchema
+        )
       ).rejects.toEqual(
         expect.objectContaining({
           name: "ApiError",
@@ -185,6 +217,11 @@ describe("api", () => {
     "throws ApiError when the server returns invalid JSON",
     async () => {
 
+      const TestResponseSchema =
+        z.object({
+          id: z.number(),
+        })
+
       vi
         .spyOn(
           globalThis,
@@ -201,12 +238,60 @@ describe("api", () => {
         )
 
       await expect(
-        api("/products")
+        api(
+          "/products",
+          TestResponseSchema
+        )
       ).rejects.toEqual(
         expect.objectContaining({
           name: "ApiError",
           message:
             "The server returned an invalid response.",
+          status: 200,
+          statusText: "OK",
+        })
+      )
+    }
+  )
+
+  it(
+    "throws ApiError when the response does not match the schema",
+    async () => {
+
+      const TestResponseSchema =
+        z.object({
+          id: z.number(),
+          title: z.string(),
+        })
+
+      vi
+        .spyOn(
+          globalThis,
+          "fetch"
+        )
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              id: "invalid",
+              title: "Test product",
+            }),
+            {
+              status: 200,
+              statusText: "OK",
+            }
+          )
+        )
+
+      await expect(
+        api(
+          "/products/1",
+          TestResponseSchema
+        )
+      ).rejects.toEqual(
+        expect.objectContaining({
+          name: "ApiError",
+          message:
+            "The server returned data with an invalid format.",
           status: 200,
           statusText: "OK",
         })

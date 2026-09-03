@@ -1,6 +1,6 @@
 import type {
   ProductSort,
-} from "../services/products"
+} from "../types/ProductSort"
 
 // Query keys are centralized so related data always shares the same
 // cache identity across hooks, pages, and prefetching.

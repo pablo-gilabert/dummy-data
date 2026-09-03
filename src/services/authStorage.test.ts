@@ -23,7 +23,8 @@ const createUser = (): User => ({
   firstName: "Test",
   lastName: "User",
   gender: "male",
-  image: "https://example.com/image.jpg",
+  image:
+    "https://example.com/image.jpg",
   accessToken: "access-token",
   refreshToken: "refresh-token",
 })
@@ -34,76 +35,121 @@ describe("authStorage", () => {
     localStorage.clear()
   })
 
-  it("returns null when there is no stored user", () => {
+  it(
+    "returns null when there is no stored user",
+    () => {
 
-    expect(
-      getStoredUser()
-    ).toBeNull()
-  })
+      expect(
+        getStoredUser(),
+      ).toBeNull()
+    },
+  )
 
-  it("stores and retrieves a user", () => {
+  it(
+    "stores and retrieves a user",
+    () => {
 
-    const user =
-      createUser()
+      const user =
+        createUser()
 
-    setStoredUser(user)
+      setStoredUser(user)
 
-    expect(
-      getStoredUser()
-    ).toEqual(user)
-  })
+      expect(
+        getStoredUser(),
+      ).toEqual(user)
+    },
+  )
 
-  it("returns the stored access token", () => {
+  it(
+    "returns the stored access token",
+    () => {
 
-    const user =
-      createUser()
+      const user =
+        createUser()
 
-    setStoredUser(user)
+      setStoredUser(user)
 
-    expect(
-      getAccessToken()
-    ).toBe("access-token")
-  })
+      expect(
+        getAccessToken(),
+      ).toBe(
+        "access-token",
+      )
+    },
+  )
 
-  it("returns null when there is no access token", () => {
+  it(
+    "returns null when there is no access token",
+    () => {
 
-    expect(
-      getAccessToken()
-    ).toBeNull()
-  })
+      expect(
+        getAccessToken(),
+      ).toBeNull()
+    },
+  )
 
-  it("clears the stored user", () => {
+  it(
+    "clears the stored user",
+    () => {
 
-    const user =
-      createUser()
+      const user =
+        createUser()
 
-    setStoredUser(user)
+      setStoredUser(user)
 
-    clearStoredUser()
+      clearStoredUser()
 
-    expect(
-      getStoredUser()
-    ).toBeNull()
+      expect(
+        getStoredUser(),
+      ).toBeNull()
 
-    expect(
-      getAccessToken()
-    ).toBeNull()
-  })
+      expect(
+        getAccessToken(),
+      ).toBeNull()
+    },
+  )
 
-  it("removes corrupted user data", () => {
+  it(
+    "removes corrupted user data",
+    () => {
 
-    localStorage.setItem(
-      "user",
-      "{invalid json"
-    )
+      localStorage.setItem(
+        "user",
+        "{invalid json",
+      )
 
-    expect(
-      getStoredUser()
-    ).toBeNull()
+      expect(
+        getStoredUser(),
+      ).toBeNull()
 
-    expect(
-      localStorage.getItem("user")
-    ).toBeNull()
-  })
+      expect(
+        localStorage.getItem(
+          "user",
+        ),
+      ).toBeNull()
+    },
+  )
 
+  it(
+    "removes stored user data with an invalid format",
+    () => {
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: "invalid-id",
+          username: "testuser",
+        }),
+      )
+
+      expect(
+        getStoredUser(),
+      ).toBeNull()
+
+      expect(
+        localStorage.getItem(
+          "user",
+        ),
+      ).toBeNull()
+    },
+  )
 })

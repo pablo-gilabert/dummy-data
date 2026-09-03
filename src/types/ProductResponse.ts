@@ -1,8 +1,11 @@
-import type { Product } from "./Product"
+import {
+  z,
+} from "zod"
 
-export interface ProductResponse {
-  products: Product[]
-  total: number
-  skip: number
-  limit: number
-}
+import {
+  ProductResponseSchema,
+} from "../schemas/ProductResponseSchema"
+
+export type ProductResponse = z.infer<
+  typeof ProductResponseSchema
+>
