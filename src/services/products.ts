@@ -91,19 +91,24 @@ const getSortParams = (
 }
 
 
-export const getProducts = async ({
-  limit,
-  skip,
-  sort = "",
-}: FetchProductsParams): Promise<ProductResponse> => {
+const createProductParams = (
+  limit: number,
+  skip: number,
+  sort: ProductSort,
+  params = new URLSearchParams(),
+) => {
   const sortParams =
     getSortParams(sort)
 
-  const params =
-    new URLSearchParams({
-      limit: String(limit),
-      skip: String(skip),
-    })
+  params.set(
+    "limit",
+    String(limit),
+  )
+
+  params.set(
+    "skip",
+    String(skip),
+  )
 
   if (sortParams.sortBy) {
     params.set(
@@ -119,6 +124,22 @@ export const getProducts = async ({
     )
   }
 
+  return params
+}
+
+
+export const getProducts = async ({
+  limit,
+  skip,
+  sort = "",
+}: FetchProductsParams): Promise<ProductResponse> => {
+  const params =
+    createProductParams(
+      limit,
+      skip,
+      sort,
+    )
+
   return api(
     `/products?${params.toString()}`,
     ProductResponseSchema,
@@ -133,44 +154,6 @@ export const getProduct =
     return api(
       `/products/${id}`,
       ProductSchema,
-    )
-  }
-
-
-export const searchProducts =
-  async (
-    query: string,
-    limit: number,
-    skip: number,
-    sort: ProductSort = "",
-  ): Promise<ProductResponse> => {
-    const sortParams =
-      getSortParams(sort)
-
-    const params =
-      new URLSearchParams({
-        q: query,
-        limit: String(limit),
-        skip: String(skip),
-      })
-
-    if (sortParams.sortBy) {
-      params.set(
-        "sortBy",
-        sortParams.sortBy,
-      )
-    }
-
-    if (sortParams.order) {
-      params.set(
-        "order",
-        sortParams.order,
-      )
-    }
-
-    return api(
-      `/products/search?${params.toString()}`,
-      ProductResponseSchema,
     )
   }
 
@@ -191,28 +174,12 @@ export const getProductsByCategory =
     skip: number,
     sort: ProductSort = "",
   ): Promise<ProductResponse> => {
-    const sortParams =
-      getSortParams(sort)
-
     const params =
-      new URLSearchParams({
-        limit: String(limit),
-        skip: String(skip),
-      })
-
-    if (sortParams.sortBy) {
-      params.set(
-        "sortBy",
-        sortParams.sortBy,
+      createProductParams(
+        limit,
+        skip,
+        sort,
       )
-    }
-
-    if (sortParams.order) {
-      params.set(
-        "order",
-        sortParams.order,
-      )
-    }
 
     return api(
       `/products/category/${encodeURIComponent(

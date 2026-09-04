@@ -9,7 +9,7 @@ import ProductDetail from "./pages/ProductDetail/ProductDetail"
 import Cart from "./pages/Cart/Cart"
 
 import Navbar from "./components/Navbar/Navbar"
-import Checkout from "./components/Checkout/Checkout"
+import Checkout from "./pages/Checkout/Checkout"
 import OrderConfirmation from "./pages/OrderConfirmation/OrderConfirmation"
 
 import NotFound from "./pages/NotFound/NotFound"

@@ -1,8 +1,4 @@
 import {
-  RefreshResponseSchema,
-} from "../schemas/RefreshResponseSchema"
-
-import {
   UserSchema,
 } from "../schemas/UserSchema"
 
@@ -70,38 +66,4 @@ export const getCurrentUser =
       await response.json()
 
     return UserSchema.parse(data)
-  }
-
-// Exposed for authentication tests and explicit token-refresh use cases.
-export const refreshAuthToken =
-  async (
-    refreshToken: string,
-  ) => {
-    const response =
-      await fetch(
-        `${API_URL}/refresh`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            refreshToken,
-          }),
-        },
-      )
-
-    if (!response.ok) {
-      throw new Error(
-        "Unable to refresh authentication.",
-      )
-    }
-
-    const data: unknown =
-      await response.json()
-
-    return RefreshResponseSchema.parse(
-      data,
-    )
   }

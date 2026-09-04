@@ -16,7 +16,6 @@ import {
   getProduct,
   getProducts,
   getProductsByCategory,
-  searchProducts,
 } from "./products"
 
 import {
@@ -44,7 +43,7 @@ vi.mock(
   "./api",
   () => ({
     api: vi.fn(),
-  })
+  }),
 )
 
 
@@ -54,11 +53,9 @@ const mockedApi =
 
 const createProduct = (
   overrides:
-    Partial<Product> = {}
+    Partial<Product> = {},
 ): Product => {
-
   return {
-
     id:
       1,
 
@@ -146,19 +143,15 @@ const createProduct = (
     ],
 
     ...overrides,
-
   }
-
 }
 
 
 const createProductResponse = (
   products:
-    Product[] = []
+    Product[] = [],
 ): ProductResponse => {
-
   return {
-
     products,
 
     total:
@@ -169,36 +162,29 @@ const createProductResponse = (
 
     limit:
       products.length,
-
   }
-
 }
 
 
 describe(
   "products services",
   () => {
-
     beforeEach(() => {
-
       vi.clearAllMocks()
-
     })
 
 
     describe(
       "getProducts",
       () => {
-
         it(
           "requests products with limit and skip",
           async () => {
-
             const response =
               createProductResponse()
 
             mockedApi.mockResolvedValue(
-              response
+              response,
             )
 
             await getProducts({
@@ -210,22 +196,20 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products?limit=10&skip=20",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "adds ascending price sorting parameters",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getProducts({
@@ -240,22 +224,20 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products?limit=10&skip=0&sortBy=price&order=asc",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "adds descending rating sorting parameters",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getProducts({
@@ -270,27 +252,23 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products?limit=10&skip=0&sortBy=rating&order=desc",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
-
-      }
+      },
     )
 
 
     describe(
       "getProduct",
       () => {
-
         it(
           "requests a product by id",
           async () => {
-
             const product =
               createProduct({
                 id:
@@ -298,100 +276,38 @@ describe(
               })
 
             mockedApi.mockResolvedValue(
-              product
+              product,
             )
 
             const result =
               await getProduct(
-                42
+                42,
               )
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/42",
-              ProductSchema
+              ProductSchema,
             )
 
             expect(
-              result
+              result,
             ).toEqual(
-              product
+              product,
             )
-
-          }
+          },
         )
-
-      }
-    )
-
-
-    describe(
-      "searchProducts",
-      () => {
-
-        it(
-          "requests products using the search endpoint",
-          async () => {
-
-            mockedApi.mockResolvedValue(
-              createProductResponse()
-            )
-
-            await searchProducts(
-              "laptop",
-              10,
-              0
-            )
-
-            expect(
-              mockedApi
-            ).toHaveBeenCalledWith(
-              "/products/search?q=laptop&limit=10&skip=0",
-              ProductResponseSchema
-            )
-
-          }
-        )
-
-
-        it(
-          "includes sorting parameters",
-          async () => {
-
-            mockedApi.mockResolvedValue(
-              createProductResponse()
-            )
-
-            await searchProducts(
-              "laptop",
-              10,
-              0,
-              "price-desc"
-            )
-
-            expect(
-              mockedApi
-            ).toHaveBeenCalledWith(
-              "/products/search?q=laptop&limit=10&skip=0&sortBy=price&order=desc",
-              ProductResponseSchema
-            )
-
-          }
-        )
-
-      }
+      },
     )
 
 
     describe(
       "getCategories",
       () => {
-
         it(
           "requests product categories",
           async () => {
-
             const categories = [
               {
                 slug:
@@ -406,99 +322,89 @@ describe(
             ]
 
             mockedApi.mockResolvedValue(
-              categories
+              categories,
             )
 
             const result =
               await getCategories()
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/categories",
-              CategorySchema.array()
+              CategorySchema.array(),
             )
 
             expect(
-              result
+              result,
             ).toEqual(
-              categories
+              categories,
             )
-
-          }
+          },
         )
-
-      }
+      },
     )
 
 
     describe(
       "getProductsByCategory",
       () => {
-
         it(
           "requests products by category",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getProductsByCategory(
               "laptops",
               10,
-              20
+              20,
             )
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/category/laptops?limit=10&skip=20",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "encodes the category",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getProductsByCategory(
               "mobile phones",
               10,
-              0
+              0,
             )
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/category/mobile%20phones?limit=10&skip=0",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
-
-      }
+      },
     )
 
 
     describe(
       "getFilteredProducts",
       () => {
-
         it(
           "uses the regular products endpoint without filters",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getFilteredProducts({
@@ -510,22 +416,20 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products?limit=10&skip=20",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "uses the category endpoint when only a category is selected",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getFilteredProducts({
@@ -540,22 +444,20 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/category/laptops?limit=10&skip=0",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "uses the search endpoint when only a search query is provided",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getFilteredProducts({
@@ -570,22 +472,19 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/search?q=laptop&limit=0",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "applies search sorting locally instead of sending sort parameters to the API",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -609,13 +508,12 @@ describe(
                 price:
                   200,
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -634,33 +532,31 @@ describe(
               })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/search?q=product&limit=0",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
 
             expect(
               result.products.map(
-                product =>
-                  product.price
-              )
+                (product) =>
+                  product.price,
+              ),
             ).toEqual([
               300,
               200,
               100,
             ])
-
-          }
+          },
         )
 
 
         it(
           "passes sorting parameters to the category endpoint",
           async () => {
-
             mockedApi.mockResolvedValue(
-              createProductResponse()
+              createProductResponse(),
             )
 
             await getFilteredProducts({
@@ -678,27 +574,25 @@ describe(
             })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/category/laptops?limit=10&skip=0&sortBy=price&order=desc",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
-
-          }
+          },
         )
 
 
         it(
           "propagates API errors",
           async () => {
-
             const error =
               new Error(
-                "Failed to fetch products"
+                "Failed to fetch products",
               )
 
             mockedApi.mockRejectedValue(
-              error
+              error,
             )
 
             await expect(
@@ -708,21 +602,18 @@ describe(
 
                 skip:
                   0,
-              })
+              }),
             ).rejects.toThrow(
-              "Failed to fetch products"
+              "Failed to fetch products",
             )
-
-          }
+          },
         )
 
 
         it(
           "loads all search results before applying category filtering and pagination",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -755,13 +646,12 @@ describe(
                 category:
                   "laptops",
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -780,52 +670,49 @@ describe(
               })
 
             expect(
-              mockedApi
+              mockedApi,
             ).toHaveBeenCalledWith(
               "/products/search?q=laptop&limit=0",
-              ProductResponseSchema
+              ProductResponseSchema,
             )
 
             expect(
-              result.products
+              result.products,
             ).toHaveLength(
-              1
+              1,
             )
 
             expect(
-              result.products[0].id
+              result.products[0].id,
             ).toBe(
-              3
+              3,
             )
 
             expect(
-              result.total
+              result.total,
             ).toBe(
-              2
+              2,
             )
 
             expect(
-              result.skip
+              result.skip,
             ).toBe(
-              1
+              1,
             )
 
             expect(
-              result.limit
+              result.limit,
             ).toBe(
-              1
+              1,
             )
-
-          }
+          },
         )
 
 
         it(
           "sorts searched products by price ascending",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -849,13 +736,12 @@ describe(
                 price:
                   200,
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -875,25 +761,22 @@ describe(
 
             expect(
               result.products.map(
-                product =>
-                  product.price
-              )
+                (product) =>
+                  product.price,
+              ),
             ).toEqual([
               100,
               200,
               300,
             ])
-
-          }
+          },
         )
 
 
         it(
           "sorts searched products by rating descending",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -917,13 +800,12 @@ describe(
                 rating:
                   4,
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -943,25 +825,22 @@ describe(
 
             expect(
               result.products.map(
-                product =>
-                  product.rating
-              )
+                (product) =>
+                  product.rating,
+              ),
             ).toEqual([
               5,
               4,
               3,
             ])
-
-          }
+          },
         )
 
 
         it(
           "sorts searched products by title ascending",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -985,13 +864,12 @@ describe(
                 title:
                   "Laptop",
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -1011,25 +889,22 @@ describe(
 
             expect(
               result.products.map(
-                product =>
-                  product.title
-              )
+                (product) =>
+                  product.title,
+              ),
             ).toEqual([
               "Apple",
               "Laptop",
               "Zebra",
             ])
-
-          }
+          },
         )
 
 
         it(
           "sorts searched products by title descending",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -1053,13 +928,12 @@ describe(
                 title:
                   "Laptop",
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -1079,25 +953,22 @@ describe(
 
             expect(
               result.products.map(
-                product =>
-                  product.title
-              )
+                (product) =>
+                  product.title,
+              ),
             ).toEqual([
               "Zebra",
               "Laptop",
               "Apple",
             ])
-
-          }
+          },
         )
 
 
         it(
           "preserves pagination after filtering and sorting",
           async () => {
-
             const products = [
-
               createProduct({
                 id:
                   1,
@@ -1129,13 +1000,12 @@ describe(
                 price:
                   200,
               }),
-
             ]
 
             mockedApi.mockResolvedValue(
               createProductResponse(
-                products
-              )
+                products,
+              ),
             )
 
             const result =
@@ -1155,25 +1025,22 @@ describe(
 
             expect(
               result.products.map(
-                product =>
-                  product.price
-              )
+                (product) =>
+                  product.price,
+              ),
             ).toEqual([
               200,
               300,
             ])
 
             expect(
-              result.total
+              result.total,
             ).toBe(
-              4
+              4,
             )
-
-          }
+          },
         )
-
-      }
+      },
     )
-
-  }
+  },
 )

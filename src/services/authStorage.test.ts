@@ -11,7 +11,6 @@ import type {
 
 import {
   clearStoredUser,
-  getAccessToken,
   getStoredUser,
   setStoredUser,
 } from "./authStorage"
@@ -61,33 +60,6 @@ describe("authStorage", () => {
   )
 
   it(
-    "returns the stored access token",
-    () => {
-
-      const user =
-        createUser()
-
-      setStoredUser(user)
-
-      expect(
-        getAccessToken(),
-      ).toBe(
-        "access-token",
-      )
-    },
-  )
-
-  it(
-    "returns null when there is no access token",
-    () => {
-
-      expect(
-        getAccessToken(),
-      ).toBeNull()
-    },
-  )
-
-  it(
     "clears the stored user",
     () => {
 
@@ -100,10 +72,6 @@ describe("authStorage", () => {
 
       expect(
         getStoredUser(),
-      ).toBeNull()
-
-      expect(
-        getAccessToken(),
       ).toBeNull()
     },
   )

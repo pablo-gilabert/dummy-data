@@ -9,7 +9,7 @@ import type {
 const USER_KEY = "user"
 
 // Authentication state is persisted locally so a page reload can restore
-// the current session before the provider validates it with the API.
+// the current session before the application validates it with the API.
 
 export const getStoredUser = (): User | null => {
   const storedUser =
@@ -30,14 +30,6 @@ export const getStoredUser = (): User | null => {
     return null
   }
 }
-
-export const getAccessToken =
-  (): string | null => {
-    const user =
-      getStoredUser()
-
-    return user?.accessToken ?? null
-  }
 
 export const setStoredUser = (
   user: User,

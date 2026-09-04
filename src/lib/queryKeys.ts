@@ -6,7 +6,6 @@ import type {
 // cache identity across hooks, pages, and prefetching.
 export const queryKeys = {
   products: {
-    all: ["products"] as const,
 
     list: (
       search: string,

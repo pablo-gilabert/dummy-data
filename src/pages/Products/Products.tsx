@@ -33,6 +33,37 @@ import styles from "./Products.module.css"
 const PRODUCTS_PER_PAGE = 12
 
 
+const createSearchParams = ({
+  search,
+  category,
+  sort,
+  page,
+}: {
+  search?: string
+  category?: string
+  sort?: string
+  page: number
+}) => {
+  const params: Record<string, string> = {
+    page: String(page),
+  }
+
+  if (search) {
+    params.search = search
+  }
+
+  if (category) {
+    params.category = category
+  }
+
+  if (sort) {
+    params.sort = sort
+  }
+
+  return params
+}
+
+
 const Products = () => {
 
   const [
@@ -144,38 +175,15 @@ const Products = () => {
       searchInput.trim()
 
 
-    const params:
-      Record<string, string> = {
-        page: "1",
-      }
-
-
-    if (trimmedSearch) {
-
-      params.search =
-        trimmedSearch
-
-    }
-
-
-    if (selectedCategory) {
-
-      params.category =
-        selectedCategory
-
-    }
-
-
-    if (sort) {
-
-      params.sort =
-        sort
-
-    }
-
-
     setSearchParams(
-      params,
+      createSearchParams({
+        search:
+          trimmedSearch,
+        category:
+          selectedCategory,
+        sort,
+        page: 1,
+      }),
     )
 
   }
@@ -186,30 +194,13 @@ const Products = () => {
     setSearchInput("")
 
 
-    const params:
-      Record<string, string> = {
-        page: "1",
-      }
-
-
-    if (selectedCategory) {
-
-      params.category =
-        selectedCategory
-
-    }
-
-
-    if (sort) {
-
-      params.sort =
-        sort
-
-    }
-
-
     setSearchParams(
-      params,
+      createSearchParams({
+        category:
+          selectedCategory,
+        sort,
+        page: 1,
+      }),
     )
 
   }
@@ -219,35 +210,14 @@ const Products = () => {
     categorySlug: string,
   ) => {
 
-    const params:
-      Record<string, string> = {
-
+    setSearchParams(
+      createSearchParams({
+        search,
         category:
           categorySlug,
-
-        page: "1",
-
-      }
-
-
-    if (search) {
-
-      params.search =
-        search
-
-    }
-
-
-    if (sort) {
-
-      params.sort =
-        sort
-
-    }
-
-
-    setSearchParams(
-      params,
+        sort,
+        page: 1,
+      }),
     )
 
   }
@@ -255,30 +225,12 @@ const Products = () => {
 
   const handleCategoryClear = () => {
 
-    const params:
-      Record<string, string> = {
-        page: "1",
-      }
-
-
-    if (search) {
-
-      params.search =
-        search
-
-    }
-
-
-    if (sort) {
-
-      params.sort =
-        sort
-
-    }
-
-
     setSearchParams(
-      params,
+      createSearchParams({
+        search,
+        sort,
+        page: 1,
+      }),
     )
 
   }
@@ -300,38 +252,15 @@ const Products = () => {
         : ""
 
 
-    const params:
-      Record<string, string> = {
-        page: "1",
-      }
-
-
-    if (search) {
-
-      params.search =
-        search
-
-    }
-
-
-    if (selectedCategory) {
-
-      params.category =
-        selectedCategory
-
-    }
-
-
-    if (selectedSort) {
-
-      params.sort =
-        selectedSort
-
-    }
-
-
     setSearchParams(
-      params,
+      createSearchParams({
+        search,
+        category:
+          selectedCategory,
+        sort:
+          selectedSort,
+        page: 1,
+      }),
     )
 
   }
@@ -341,41 +270,14 @@ const Products = () => {
     newPage: number,
   ) => {
 
-    const params:
-      Record<string, string> = {
-
-        page:
-          String(newPage),
-
-      }
-
-
-    if (search) {
-
-      params.search =
-        search
-
-    }
-
-
-    if (selectedCategory) {
-
-      params.category =
-        selectedCategory
-
-    }
-
-
-    if (sort) {
-
-      params.sort =
-        sort
-
-    }
-
-
     setSearchParams(
-      params,
+      createSearchParams({
+        search,
+        category:
+          selectedCategory,
+        sort,
+        page: newPage,
+      }),
     )
 
   }
