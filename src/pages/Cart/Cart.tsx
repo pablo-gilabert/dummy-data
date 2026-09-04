@@ -1,6 +1,6 @@
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import CartItem from "../../components/CartItem/CartItem"
 import CartSummary from "../../components/CartSummary/CartSummary"

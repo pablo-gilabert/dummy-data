@@ -2,7 +2,7 @@ import type { CartItem as CartItemType } from "../../types/CartItem"
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import { Link } from "react-router-dom"
 

@@ -23,12 +23,12 @@ import CartSummary from "./CartSummary"
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import Swal from "sweetalert2"
 
 vi.mock(
-  "../../CartContext/useCart",
+  "../../store/useCart",
   () => ({
     useCart: vi.fn(),
   })

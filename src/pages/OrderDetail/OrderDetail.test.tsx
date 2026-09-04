@@ -25,7 +25,7 @@ import type {
 } from "../../types/Order"
 
 vi.mock(
-  "../../AuthContext/useAuth",
+  "../../store/useAuth",
   () => ({
     useAuth: vi.fn(),
   })
@@ -40,7 +40,7 @@ vi.mock(
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 import {
   getOrders,

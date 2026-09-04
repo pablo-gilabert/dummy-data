@@ -26,14 +26,14 @@ import type {
 } from "../../types/Product"
 
 vi.mock(
-  "../../CartContext/useCart",
+  "../../store/useCart",
   () => ({
     useCart: vi.fn(),
   })
 )
 
 vi.mock(
-  "../../AuthContext/useAuth",
+  "../../store/useAuth",
   () => ({
     useAuth: vi.fn(),
   })
@@ -41,11 +41,11 @@ vi.mock(
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 const mockedUseCart =
   vi.mocked(useCart)

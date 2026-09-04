@@ -32,7 +32,7 @@ import {
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 vi.mock(
   "../../services/products",
@@ -42,7 +42,7 @@ vi.mock(
 )
 
 vi.mock(
-  "../../CartContext/useCart",
+  "../../store/useCart",
   () => ({
     useCart: vi.fn(),
   })

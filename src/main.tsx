@@ -18,52 +18,48 @@ import {
   BrowserRouter,
 } from "react-router-dom"
 
-import App from "./App"
-
 import {
-  CartProvider,
-} from "./CartContext/CartProvider"
+  Provider,
+} from "react-redux"
 
-import AuthProvider from "./AuthContext/AuthProvider"
+import App from "./App"
 
 import {
   queryClient,
 } from "./lib/queryClient"
 
+import {
+  initializeAuth,
+} from "./store/slices/authSlice"
+
+import {
+  store,
+} from "./store/store"
+
 import "./index.css"
 
-// The provider order is intentional: routing and server-state services
-// are available to both authentication and cart state throughout the app.
+
+store.dispatch(
+  initializeAuth(),
+)
+
+
 createRoot(
-  document.getElementById("root")!
+  document.getElementById("root")!,
 ).render(
-
   <StrictMode>
-
     <BrowserRouter>
-
       <QueryClientProvider
         client={queryClient}
       >
+        <Provider store={store}>
+          <App />
+        </Provider>
 
-        <AuthProvider>
-
-          <CartProvider>
-
-            <App />
-
-          </CartProvider>
-
-        </AuthProvider>
-
-        {/* Devtools are useful locally without changing application behavior. */}
         <ReactQueryDevtools
           initialIsOpen={false}
         />
-
       </QueryClientProvider>
-
     </BrowserRouter>
-
-  </StrictMode>
+  </StrictMode>,
 )

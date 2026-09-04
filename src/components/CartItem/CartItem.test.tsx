@@ -21,10 +21,10 @@ import CartItem from "./CartItem"
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 vi.mock(
-  "../../CartContext/useCart",
+  "../../store/useCart",
   () => ({
     useCart: vi.fn(),
   })

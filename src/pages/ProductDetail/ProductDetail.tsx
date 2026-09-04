@@ -10,7 +10,7 @@ import {
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import LoadingState from "../../components/LoadingState/LoadingState"
 import ErrorState from "../../components/ErrorState/ErrorState"

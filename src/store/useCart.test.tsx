@@ -18,7 +18,7 @@ describe(
   () => {
 
     it(
-      "throws an error when used outside CartProvider",
+      "throws an error when used outside Redux Provider",
       () => {
 
         expect(() =>
@@ -26,7 +26,7 @@ describe(
             useCart()
           )
         ).toThrow(
-          "useCart must be used inside CartProvider"
+          "could not find react-redux context value"
         )
 
       }

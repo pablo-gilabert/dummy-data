@@ -9,7 +9,7 @@ import {
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 import {
   getOrders,

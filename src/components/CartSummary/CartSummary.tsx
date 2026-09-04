@@ -6,7 +6,7 @@ import {
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import styles from "./CartSummary.module.css"
 

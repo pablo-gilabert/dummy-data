@@ -17,14 +17,14 @@ import OrderConfirmation from "./OrderConfirmation"
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 import {
   getOrders,
 } from "../../services/orderStorage"
 
 vi.mock(
-  "../../AuthContext/useAuth",
+  "../../store/useAuth",
   () => ({
     useAuth: vi.fn(),
   })

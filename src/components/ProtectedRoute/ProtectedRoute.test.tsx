@@ -19,7 +19,7 @@ import {
 import ProtectedRoute from "./ProtectedRoute"
 
 vi.mock(
-  "../../AuthContext/useAuth",
+  "../../store/useAuth",
   () => ({
     useAuth: vi.fn(),
   })
@@ -27,7 +27,7 @@ vi.mock(
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 const mockedUseAuth =
   vi.mocked(useAuth)

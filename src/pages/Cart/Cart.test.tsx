@@ -14,12 +14,12 @@ import Cart from "./Cart"
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import type { Product } from "../../types/Product"
 
 vi.mock(
-  "../../CartContext/useCart",
+  "../../store/useCart",
   () => ({
     useCart: vi.fn(),
   })

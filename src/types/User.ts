@@ -9,4 +9,3 @@ import {
 export type User = z.infer<
   typeof UserSchema
 >
-

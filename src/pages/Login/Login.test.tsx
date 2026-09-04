@@ -21,7 +21,7 @@ import {
 import Login from "./Login"
 
 vi.mock(
-  "../../AuthContext/useAuth",
+  "../../store/useAuth",
   () => ({
     useAuth: vi.fn(),
   })
@@ -29,7 +29,7 @@ vi.mock(
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 const mockedUseAuth =
   vi.mocked(useAuth)

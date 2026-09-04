@@ -12,7 +12,7 @@ import {
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 import {
   LoginSchema,
@@ -67,9 +67,11 @@ const Login = () => {
         "root",
         {
           message:
-            error instanceof Error
-              ? error.message
-              : "Unable to log in.",
+            typeof error === "string"
+              ? error
+              : error instanceof Error
+                ? error.message
+                : "Unable to log in.",
         },
       )
     }

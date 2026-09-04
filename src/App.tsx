@@ -36,26 +36,34 @@ function App() {
 
         {/* Authenticated routes share one protection boundary. */}
         <Route element={<ProtectedRoute />}>
+
           <Route
             path="/checkout"
             element={<Checkout />}
           />
+
           <Route
             path="/order-confirmation"
             element={<OrderConfirmation />}
           />
+
           <Route
             path="/orders"
             element={<Orders />}
           />
+
           <Route
             path="/orders/:orderId"
             element={<OrderDetail />}
           />
+
         </Route>
 
         {/* Unknown URLs are handled consistently by the NotFound page. */}
-        <Route path="*" element={<NotFound />} />
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
       </Routes>
     </>
   )

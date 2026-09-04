@@ -18,11 +18,11 @@ import Checkout from "./Checkout"
 
 import {
   useCart,
-} from "../../CartContext/useCart"
+} from "../../store/useCart"
 
 import {
   useAuth,
-} from "../../AuthContext/useAuth"
+} from "../../store/useAuth"
 
 import {
   saveOrder,
@@ -32,7 +32,7 @@ import Swal from "sweetalert2"
 
 
 vi.mock(
-  "../../CartContext/useCart",
+  "../../store/useCart",
   () => ({
     useCart: vi.fn(),
   })
@@ -40,7 +40,7 @@ vi.mock(
 
 
 vi.mock(
-  "../../AuthContext/useAuth",
+  "../../store/useAuth",
   () => ({
     useAuth: vi.fn(),
   })
