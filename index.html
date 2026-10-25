@@ -8,6 +8,15 @@
       content="A React e-commerce front-end built with TypeScript and the DummyJSON API."
     />
     <title>Dummy Data Store</title>
+    <script>
+      // Apply the saved display preference before the first browser paint.
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem("dummy-data-theme") === "dark" ? "dark" : "light";
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

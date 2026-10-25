@@ -23,6 +23,7 @@ import {
 } from "react-redux"
 
 import App from "./App"
+import ThemeToggle from "./components/ThemeToggle/ThemeToggle"
 
 import {
   queryClient,
@@ -37,12 +38,11 @@ import {
 } from "./store/store"
 
 import "./index.css"
-
+import "./styles/Theme.css"
 
 store.dispatch(
   initializeAuth(),
 )
-
 
 createRoot(
   document.getElementById("root")!,
@@ -54,6 +54,7 @@ createRoot(
       >
         <Provider store={store}>
           <App />
+          <ThemeToggle />
         </Provider>
 
         <ReactQueryDevtools

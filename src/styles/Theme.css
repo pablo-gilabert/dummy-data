@@ -1,0 +1,207 @@
+/* Theme tokens and overrides. The existing light appearance is unchanged. */
+:root {
+    color-scheme: light;
+    --theme-bg: #ffffff;
+    --theme-text: #111827;
+    --theme-muted: #475569;
+    --theme-surface: #ffffff;
+    --theme-field: #ffffff;
+    --theme-field-border: #94a3b8;
+    --theme-border: #64748b;
+    --theme-float-bg: #ffffff;
+    --theme-float-text: #1e293b;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --theme-bg: #101923;
+    --theme-text: #edf4fb;
+    --theme-muted: #c2cede;
+    --theme-surface: #1d2b39;
+    --theme-field: #182737;
+    --theme-field-border: #6d8ba5;
+    --theme-border: #7490a8;
+    --theme-float-bg: #213548;
+    --theme-float-text: #f1f5fb;
+
+    /* Reuse the palette tokens already consumed by the CSS Modules. */
+    --background-card: #213141;
+    --primary-color: #7aade8;
+    --secundary-color: #304b64;
+    --tertiary-color: #294958;
+    --blue: #9bc3ff;
+}
+
+:root[data-theme="dark"] body {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] body :is(input, textarea, select) {
+    background-color: var(--theme-field);
+    border-color: var(--theme-field-border);
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] body :is(input, textarea)::placeholder {
+    color: var(--theme-muted);
+    opacity: 0.85;
+}
+
+:root[data-theme="dark"] :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 3px;
+}
+
+/* Module class names in the current Vite setup use _localName_hash.
+   More specific attribute selectors accommodate legacy hard-coded colors
+   without altering the existing light-theme component styles. */
+:root[data-theme="dark"] :is(
+    [class*="_login_"],
+    [class*="_confirmation_"],
+    [class*="_orderDetail_"],
+    [class*="_notFound_"]
+) {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] :is(
+    [class*="_card_"],
+    [class*="_orderInfo_"],
+    [class*="_empty_"]
+) {
+    background-color: var(--theme-surface);
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] [class*="_orderDetail_"] :is(
+    [class*="_header_"],
+    [class*="_customer_"],
+    [class*="_items_"],
+    [class*="_summary_"],
+    [class*="_item_"],
+    [class*="_notFound_"]
+) {
+    background-color: var(--theme-surface);
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] [class*="_orderDetail_"] [class*="_image_"] {
+    background-color: #273a4d;
+}
+
+/* Restore readable foregrounds for legacy rules with color: #000. */
+:root[data-theme="dark"] :is(
+    [class*="_login_"],
+    [class*="_notFound_"],
+    [class*="_confirmation_"],
+    [class*="_orders_"],
+    [class*="_orderDetail_"],
+    [class*="_checkout_"],
+    [class*="_summary_"]
+) :is(
+    h1, h2, h3, p, strong,
+    [class*="_title_"],
+    [class*="_message_"],
+    [class*="_date_"],
+    [class*="_total_"],
+    [class*="_row_"],
+    [class*="_itemSubtotal_"],
+    [class*="_backButton_"],
+    [class*="_customerGrid_"] span,
+    [class*="_customerGrid_"] strong,
+    [class*="_itemInfo_"] p
+) {
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] [class*="_login_"] [class*="_field_"] label,
+:root[data-theme="dark"] [class*="_login_"] [class*="_message_"],
+:root[data-theme="dark"] [class*="_notFound_"] [class*="_message_"] {
+    color: var(--theme-muted);
+}
+
+:root[data-theme="dark"] [class*="_checkout_"] [class*="_summary_"],
+:root[data-theme="dark"] [class*="_confirmation_"] [class*="_orderInfo_"] {
+    background-color: var(--theme-surface);
+}
+
+/* Preserve high contrast on primary buttons, which use brighter theme colors. */
+:root[data-theme="dark"] :is(
+    [class*="_primaryButton_"],
+    [class*="_secondaryButton_"],
+    [class*="_searchButton_"],
+    [class*="_clearButton_"],
+    [class*="_categoryActive_"],
+    [class*="_buttonCart_"],
+    [class*="_featureIcon_"]
+) {
+    color: #101923;
+}
+
+:root[data-theme="dark"] :is(
+    [class*="_featureCard_"],
+    [class*="_heroVisual_"],
+    [class*="_visualCard_"],
+    [class*="_visualHeader_"] span,
+    [class*="_visualImage_"],
+    [class*="_visualLines_"] span,
+    [class*="_visualFooter_"] span,
+    [class*="_featureIcon_"],
+    [class*="_cta_"]
+) {
+    border-color: var(--theme-border);
+}
+
+:root[data-theme="dark"] [class*="_visualLines_"] span {
+    background-color: #b9d2e5;
+}
+
+:root[data-theme="dark"] [class*="_notFound_"] [class*="_button_"],
+:root[data-theme="dark"] [class*="_confirmation_"] [class*="_productsButton_"],
+:root[data-theme="dark"] [class*="_orders_"] [class*="_viewButton_"],
+:root[data-theme="dark"] [class*="_orders_"] [class*="_button_"],
+:root[data-theme="dark"] [class*="_orderDetail_"] [class*="_button_"] {
+    color: #ffffff;
+}
+
+/* SweetAlert2 remains legible in both modes without changing dialog logic. */
+:root[data-theme="dark"] .swal2-popup {
+    background-color: var(--theme-surface);
+    color: var(--theme-text);
+}
+
+:root[data-theme="dark"] .swal2-html-container {
+    color: var(--theme-muted);
+}
+
+:root[data-theme="dark"] .swal2-input,
+:root[data-theme="dark"] .swal2-textarea,
+:root[data-theme="dark"] .swal2-select {
+    background-color: var(--theme-field);
+    color: var(--theme-text);
+    border-color: var(--theme-field-border);
+}
+
+/* Nested labels and values have explicit black colors in several modules. */
+:root[data-theme="dark"] [class*="_confirmation_"] :is(
+    [class*="_row_"],
+    [class*="_total_"],
+    [class*="_product_"]
+) span,
+:root[data-theme="dark"] [class*="_checkout_"] :is(
+    [class*="_total_"],
+    [class*="_product_"]
+) span,
+:root[data-theme="dark"] [class*="_summary_"] :is(
+    [class*="_row_"],
+    [class*="_total_"]
+) span,
+:root[data-theme="dark"] [class*="_orders_"] :is(
+    [class*="_cardHeader_"],
+    [class*="_cardBody_"]
+) span,
+:root[data-theme="dark"] [class*="_notFound_"] [class*="_code_"] {
+    color: var(--theme-text);
+}

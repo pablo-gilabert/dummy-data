@@ -1,335 +1,187 @@
 # Dummy Data Store
 
-A responsive e-commerce front-end built with React and TypeScript, using the DummyJSON API as the remote data source.
+A responsive e-commerce frontend built with **React, TypeScript, and the [DummyJSON API](https://dummyjson.com/)**. The application demonstrates product discovery, authenticated shopping flows, a stock-aware cart, client-side checkout, and order history, with a focus on maintainable architecture and automated testing.
 
-The project was built to demonstrate practical front-end engineering: API integration, server-state management, authentication, protected routes, cart state, checkout flows, persistence, testing, and CI.
+> **Portfolio demonstration:** Products and authentication use DummyJSON. Checkout does **not** process real payments or submit purchases to a production commerce backend; demo orders are saved locally in the browser.
 
-## What it demonstrates
+## Features
 
-- Product browsing with pagination
-- Product search and category filtering
-- Multiple sorting strategies
-- Product detail pages with image galleries and reviews
-- TanStack Query for server-state management and caching
-- Authentication with session validation and token refresh
-- Protected application routes
-- Per-user cart persistence and cart isolation
-- Stock-aware cart quantities
-- Checkout form validation and order creation
-- Local order history for the demo checkout flow
-- Loading, error, empty, and updating states
-- Responsive UI built with CSS Modules
-- Unit/component tests with Vitest and Testing Library
-- End-to-end tests with Playwright
-- Coverage reporting with V8
-- Automated linting, tests, E2E checks, and production builds through GitHub Actions
+### Storefront
+
+- Product catalogue with search, category filters, sorting, and pagination.
+- Shareable product-list state through URL search parameters.
+- Product details with an image gallery, stock information, ratings, and reviews.
+- Loading, error, empty, and background-fetching states.
+- Responsive layouts built with CSS Modules.
+- **Light and dark modes**, with a persistent preference stored in `localStorage`.
+
+### Authentication and shopping
+
+- Sign-in using DummyJSON's authentication endpoint.
+- Session initialization, current-user validation, refresh-token handling, and protected routes.
+- Cart managed by Redux Toolkit, with stock-aware quantity limits.
+- Per-user cart persistence in `localStorage` using `cart_<userId>` keys.
+- Checkout with React Hook Form and Zod validation.
+- SweetAlert2 confirmations and user feedback.
+- Locally saved demo orders, order confirmation, order history, and order detail pages.
+
+### Quality
+
+- TypeScript types and Zod schemas for runtime API-response validation.
+- ESLint checks and component/unit tests using Vitest and React Testing Library.
+- End-to-end tests with Playwright (Chromium).
+- V8 coverage reporting and GitHub Actions CI.
 
 ## Tech stack
 
-### Application
-
-| Technology | Role |
+| Technology | Purpose |
 | --- | --- |
-| React 19 | UI development |
-| TypeScript 6 | Static typing |
-| Vite 8 | Development server and production build |
-| React Router 7 | Client-side routing |
-| TanStack Query 5 | Server-state management, caching, and request lifecycle |
-| React Context + `useReducer` | Authentication and cart application state |
-| CSS Modules | Component-scoped styling |
+| React 19 | Component-based user interface |
+| TypeScript 6 | Type safety |
+| Vite 8 | Development and production builds |
+| React Router 7 | Client-side routes and URL-driven filters |
+| Redux Toolkit / React Redux | Authentication and shopping-cart state |
+| TanStack Query 5 | Remote data fetching, cache, and loading states |
+| React Hook Form | Checkout form state |
+| Zod | Runtime schemas and form validation |
+| SweetAlert2 | Confirmations, alerts, and feedback |
 | React Icons | Interface icons |
-| SweetAlert2 | Confirmations and user feedback |
-
-### Quality and testing
-
-| Tool | Role |
-| --- | --- |
-| Vitest | Unit and component testing |
-| React Testing Library | User-focused React tests |
-| `@testing-library/user-event` | Realistic interaction simulation |
-| `jest-dom` | DOM assertions |
-| MSW | API mocking in tests |
-| Playwright | End-to-end browser testing |
-| V8 coverage | Coverage reporting |
-| ESLint | Static analysis |
-| GitHub Actions | Continuous integration |
+| CSS Modules | Component-scoped responsive styles |
+| Vitest / React Testing Library | Unit and component tests |
+| Playwright | Browser-based E2E tests |
+| ESLint / GitHub Actions | Static checks and continuous integration |
 
 ## Architecture
 
-The application separates UI composition, server communication, server state, and local application state.
+The application separates remote data, business logic, and browser-local state:
 
 ```text
-React UI
-   │
-   ├── Pages
-   │     └── compose reusable components
-   │
-   ├── Context
-   │     ├── Authentication
-   │     └── Cart state
-   │
-   ├── Hooks / Query definitions
-   │     └── TanStack Query
-   │
-   └── Services
-         ├── API client
-         ├── Authentication
-         ├── Products
-         └── Local persistence
-                    │
-                    ▼
-              DummyJSON API
+src/
+├── components/       # Reusable UI, route protection, theme toggle
+├── hooks/            # Product/query hooks
+├── lib/              # Query client and query keys
+├── pages/            # Home, catalogue, detail, cart, login, checkout, orders
+├── queries/          # Reusable TanStack Query definitions
+├── schemas/          # Zod validation contracts
+├── services/         # DummyJSON requests, authentication, local storage
+├── store/            # Redux Toolkit store, slices, typed hooks, persistence
+├── styles/           # Application theme tokens and dark-mode overrides
+├── test/             # Shared test setup
+├── types/            # Application domain types
+├── utils/            # Presentation helpers
+├── App.tsx            # Route definitions
+├── main.tsx           # Application providers and initialization
+└── index.css          # Global styles and original color variables
 ```
 
-### Server state vs. application state
+**Remote product state** is loaded through the services/query layer and cached using TanStack Query. Search, category, sorting, and pagination state are represented in the URL (for example, `/products?search=phone&category=smartphones&sort=price-asc&page=2`).
 
-The project intentionally distinguishes between data that belongs to the remote API and state that belongs to the browser session.
+**Application state** lives in Redux Toolkit. The `auth` slice handles session state, while the `cart` slice enforces item quantities against product stock. A listener middleware persists and restores each user's cart.
 
-**TanStack Query** manages server state such as products and categories. Query keys are centralized so list, detail, and prefetch operations share the same cache identity.
+**Demo orders** are stored separately in browser `localStorage` and associated with the current user. No server-side order database is used.
 
-**React Context + `useReducer`** manages application state such as the authenticated user and shopping cart. The cart is persisted in `localStorage` using a user-specific key.
+## Routes
 
-This separation avoids using one state-management solution for unrelated problems.
+| Route | Description | Access |
+| --- | --- | --- |
+| `/` | Storefront landing page | Public |
+| `/products` | Product catalogue, filters, search, sorting, pagination | Public |
+| `/products/:id` | Product information, gallery, reviews | Public |
+| `/cart` | Shopping cart | Public |
+| `/login` | DummyJSON sign-in | Public |
+| `/checkout` | Demo checkout | Authenticated |
+| `/order-confirmation` | Confirmation after checkout | Authenticated |
+| `/orders` | Local order history | Authenticated |
+| `/orders/:orderId` | Individual order details | Authenticated |
+| Any other path | 404 page | Public |
 
-## Authentication flow
+## Authentication and local persistence
 
-Authentication is handled through `AuthProvider` and a dedicated API client.
+Authentication uses `https://dummyjson.com/auth`. The application keeps the authenticated user and tokens in browser storage, validates the session when the app starts, and attempts a token refresh following an unauthorized authenticated request.
 
-```text
-Login
-  │
-  ▼
-DummyJSON authentication
-  │
-  ▼
-Store authenticated user + tokens
-  │
-  ▼
-Validate session on application startup
-  │
-  ├── valid ───────────────► continue authenticated
-  │
-  └── expired/401
-          │
-          ▼
-     refresh token
-          │
-       ┌──┴──┐
-       │     │
-    success failure
-       │     │
-       ▼     ▼
-     retry  clear session
-```
+| Storage key | Purpose |
+| --- | --- |
+| `user` | Demo authenticated user and tokens |
+| `cart_<userId>` | Cart associated with a specific signed-in user |
+| `orders` | Locally created demo orders |
+| `lastOrderId` | Last submitted demo order for the confirmation flow |
+| `dummy-data-theme` | Selected display mode: `light` or `dark` |
 
-Authenticated routes are protected by `ProtectedRoute`, while the authentication implementation remains isolated from page components.
+Browser storage is **not a secure credential store**. This authentication and checkout setup is appropriate for a technical demonstration, not for handling real customer credentials or payments.
 
-## Cart persistence
+## Light and dark mode
 
-The cart is local application state rather than server state.
+Use the floating sun/moon button at the bottom-right of the interface to switch between themes. The original light appearance is the default. The selected theme persists across reloads in `localStorage` and is applied before React renders to minimize flashes of the wrong theme. Theme support is presentation-only; it does not change authentication, product data, cart logic, or checkout behavior.
 
-Each authenticated user receives an independent storage key:
+## Getting started
 
-```text
-cart_<userId>
-```
-
-This means:
-
-- A cart survives a page reload.
-- Different users do not share the same cart.
-- Clearing a cart removes the persisted cart for the current user.
-- Stock limits are enforced by the reducer.
-
-## Product data flow
-
-The product page state is represented in the URL, for example:
-
-```text
-/products?search=phone&category=smartphones&sort=price-asc&page=2
-```
-
-The flow is:
-
-```text
-URL state
-   ↓
-Products page
-   ↓
-useProducts
-   ↓
-productQueries
-   ↓
-products service
-   ↓
-API abstraction
-   ↓
-DummyJSON
-```
-
-This makes filters and pagination shareable, reload-safe, and naturally connected to TanStack Query's cache keys.
-
-## Testing strategy
-
-The project uses two complementary layers.
-
-### Unit and component tests
-
-Vitest and React Testing Library cover services, reducers, contexts, components, and pages. MSW provides deterministic API behavior for service and hook tests.
-
-The tests focus on observable behavior rather than implementation details whenever practical.
-
-### End-to-end tests
-
-Playwright validates complete user flows in a real browser, including:
-
-- Home navigation
-- Product browsing and filtering
-- Product details
-- Login and authentication failures
-- Protected routes
-- Cart operations
-- Cart persistence and user isolation
-- Checkout
-- Stock limits
-- Order creation and viewing
-
-## Running the project
-
-### Requirements
+### Prerequisites
 
 - Node.js 22 or newer
 - npm
+- Internet access for the DummyJSON API
 
-### Install dependencies
+### Install and run
 
 ```bash
 npm install
-```
-
-### Start development server
-
-```bash
 npm run dev
 ```
 
-### Run unit/component tests
+Use the URL printed by Vite to open the application. To try authenticated flows, use a valid demo user from the [DummyJSON authentication documentation](https://dummyjson.com/docs/auth).
+
+### Commands
 
 ```bash
-npm test -- --run
+npm run lint             # ESLint
+npm test -- --run         # Unit/component tests once
+npm run test:coverage    # Unit/component tests and V8 coverage
+npx playwright install chromium
+npm run test:e2e         # Playwright browser tests
+npm run build            # Type-check and production build
+npm run preview          # Preview the production build
 ```
 
-### Run tests with coverage
+Playwright's configuration starts the Vite development server for E2E runs. The E2E scenarios depend on demo API data being available and consistent.
 
-```bash
-npm run test:coverage
-```
+## Testing and CI
 
-### Run end-to-end tests
+- **Unit/component tests:** Vitest, React Testing Library, and user-event cover UI, Redux state, services, validation, and page behavior.
+- **E2E tests:** Playwright exercises browsing, authentication, cart, checkout, and order-management flows in Chromium.
+- **CI:** `.github/workflows/ci.yml` runs `npm ci`, ESLint, Vitest coverage, Playwright, and the production build on pushes and pull requests targeting `main`.
 
-```bash
-npm run test:e2e
-```
+The project has no custom backend and does not collect or process real payments. Availability of remote products and authentication depends on the public DummyJSON service.
 
-### Run linting
-
-```bash
-npm run lint
-```
-
-### Build for production
-
-```bash
-npm run build
-```
-
-### Preview the production build
-
-```bash
-npm run preview
-```
-
-## Continuous integration
-
-GitHub Actions runs the main quality checks for pushes and pull requests targeting `main`.
-
-```text
-Install dependencies
-        ↓
-ESLint
-        ↓
-Unit tests + coverage
-        ↓
-Playwright
-        ↓
-Production build
-```
-
-The goal is to keep the repository reproducible and to catch regressions before changes are considered ready.
-
-## Project structure
+## Repository layout
 
 ```text
 dummy-data/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+├── .github/workflows/ci.yml
 ├── e2e/
-│   ├── auth.spec.ts
-│   ├── cart.spec.ts
-│   ├── checkout.spec.ts
-│   ├── home.spec.ts
-│   ├── login.spec.ts
-│   ├── orders.spec.ts
-│   └── products.spec.ts
 ├── src/
-│   ├── AuthContext/
-│   ├── CartContext/
 │   ├── components/
 │   ├── hooks/
 │   ├── lib/
 │   ├── pages/
 │   ├── queries/
+│   ├── schemas/
 │   ├── services/
+│   ├── store/
+│   ├── styles/
 │   ├── test/
 │   ├── types/
-│   ├── utils/
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
+│   └── utils/
 ├── eslint.config.js
 ├── index.html
 ├── package.json
 ├── playwright.config.ts
-├── tsconfig.json
 ├── tsconfig.app.json
 ├── tsconfig.node.json
 └── vite.config.ts
 ```
 
-## API
-
-Product and authentication data are provided by the [DummyJSON](https://dummyjson.com/) public API.
-
-The project keeps API-specific request construction inside the service layer so the UI does not depend directly on endpoint details.
-
-## Engineering decisions
-
-A few decisions were made deliberately rather than adding libraries for the sake of the stack:
-
-- TanStack Query is used for remote/server state, not the local cart.
-- React Context is sufficient for authentication and cart state at this application size.
-- CSS Modules keep styles local without introducing a component library.
-- The cart and orders use `localStorage` because the public API is being used as a data source, not as a real e-commerce backend.
-- MSW makes API tests deterministic without coupling them to the availability of a public service.
-- Playwright covers the highest-value user journeys in addition to unit/component coverage.
-
-## Notes
-
-This is a portfolio project designed to demonstrate front-end engineering practices around a realistic shopping workflow. It is not intended to represent production-grade payment processing, secure credential storage, or a real order backend.
-
 ## Author
 
-**Pablo Gilabert**
+**Pablo Gilabert** — Software developer.
 
-Front-end developer focused on React, TypeScript, API integration, testing, and maintainable application architecture.
+This repository is a portfolio demonstration of front-end engineering, state management, API integration, validation, responsive UI, and automated testing.
